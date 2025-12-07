@@ -16,10 +16,6 @@ mcp-name: io.github.taylorleese/mcp-toolz
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/taylorleese/mcp-toolz/badge)](https://scorecard.dev/viewer/?uri=github.com/taylorleese/mcp-toolz)
 [![Dependabot](https://img.shields.io/badge/Dependabot-enabled-blue?logo=dependabot)](https://github.com/taylorleese/mcp-toolz/blob/main/.github/dependabot.yml)
 
-<a href="https://glama.ai/mcp/servers/@taylorleese/mcp-toolz">
-  <img width="380" height="200" src="https://glama.ai/mcp/servers/@taylorleese/mcp-toolz/badge" alt="mcp-toolz MCP server" />
-</a>
-
 Save contexts and todos across Claude Code sessions, get feedback from ChatGPT, Claude, Gemini, and DeepSeek.
 
 ## Features
