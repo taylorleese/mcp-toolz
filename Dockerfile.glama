@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM debian:bookworm-slim@sha256:b4aa902587c2e61ce789849cb54c332b0400fe27b1ee33af4669e1f7e7c3e22f
 
 ENV DEBIAN_FRONTEND=noninteractive \
     GLAMA_VERSION="1.0.0"
@@ -8,11 +8,15 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # Install system dependencies and Node.js
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ca-certificates curl git && \
-    curl -fsSL https://deb.nodesource.com/setup_24.x | bash - && \
-    apt-get install -y --no-install-recommends nodejs && \
+    curl -fsSL https://deb.nodesource.com/setup_24.x -o nodesource_setup.sh && \
+    bash nodesource_setup.sh && \
+    rm nodesource_setup.sh && \
+    apt-get install -y --no-install-recommends nodejs=24.* && \
     npm install -g mcp-proxy@5.12.0 pnpm@10.14.0 && \
     node --version && \
-    curl -LsSf https://astral.sh/uv/install.sh | UV_INSTALL_DIR="/usr/local/bin" sh && \
+    curl -LsSf https://astral.sh/uv/0.5.14/install.sh -o uv_install.sh && \
+    UV_INSTALL_DIR="/usr/local/bin" sh uv_install.sh && \
+    rm uv_install.sh && \
     uv python install 3.13 --default --preview && \
     ln -s "$(uv python find)" /usr/local/bin/python && \
     python --version && \
