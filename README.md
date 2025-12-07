@@ -633,6 +633,10 @@ pytest
 [![isort](https://img.shields.io/badge/imports-isort-blue)](https://pycqa.github.io/isort/)
 [![security: bandit](https://img.shields.io/badge/security-bandit-yellow.svg)](https://github.com/PyCQA/bandit)
 
+<a href="https://glama.ai/mcp/servers/@taylorleese/mcp-toolz">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@taylorleese/mcp-toolz/badge" alt="mcp-toolz MCP server" />
+</a>
+
 ```bash
 # Run all checks (runs automatically on commit after pre-commit install)
 pre-commit run --all-files
