@@ -8,7 +8,13 @@ WORKDIR /app
 # For production, override with specific commit: docker build --build-arg GIT_REF=<commit-hash> ...
 ARG GIT_REF=main
 RUN git clone https://github.com/taylorleese/mcp-toolz . && git checkout ${GIT_REF}
+# Create non-root user for security
+RUN useradd -m -u 1000 mcpuser && chown -R mcpuser:mcpuser /app
+USER mcpuser
 RUN (uv venv --python 3.13) && (uv pip install --require-hashes -r requirements.txt) && (uv pip install -e .)
+# Health check to verify server is responding
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:8080/ping || exit 1
 # Note: The "--" separator is critical - it tells mcp-proxy to stop parsing flags
 # Without it, "-m" gets interpreted as an mcp-proxy option instead of being passed to Python
 CMD ["mcp-proxy","/app/.venv/bin/python","--","-m","mcp_server"]
