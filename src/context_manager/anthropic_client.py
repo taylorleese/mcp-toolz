@@ -19,7 +19,7 @@ class ClaudeClient:
             raise ValueError(msg)
 
         self.model: str = model or os.getenv("MCP_TOOLZ_CLAUDE_MODEL") or "claude-sonnet-4-5-20250929"
-        self.client = Anthropic(api_key=self.api_key)
+        self.client = Anthropic(api_key=self.api_key, timeout=30.0)
 
     def get_second_opinion(self, context: ContextEntry, question: str | None = None) -> str:
         """Get Claude's second opinion on a context, or answer a specific question.
