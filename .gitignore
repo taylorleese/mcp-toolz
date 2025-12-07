@@ -56,6 +56,3 @@ junit.xml
 # Tool caches
 .mypy_cache/
 .ruff_cache/
-
-# Glama testing
-Dockerfile.glama
