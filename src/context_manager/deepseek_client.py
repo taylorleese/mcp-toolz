@@ -19,7 +19,7 @@ class DeepSeekClient:
 
         self.model: str = model or os.getenv("MCP_TOOLZ_DEEPSEEK_MODEL") or "deepseek-chat"
         # DeepSeek uses OpenAI-compatible API
-        self.client = OpenAI(api_key=self.api_key, base_url="https://api.deepseek.com")
+        self.client = OpenAI(api_key=self.api_key, base_url="https://api.deepseek.com", timeout=30.0)
 
     def get_second_opinion(self, context: ContextEntry, question: str | None = None) -> str:
         """Get DeepSeek's second opinion on a context, or answer a specific question.

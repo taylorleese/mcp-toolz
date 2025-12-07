@@ -18,7 +18,7 @@ class TestGeminiClient:
         monkeypatch.setenv("GOOGLE_API_KEY", "test-key")
         client = GeminiClient()
         assert client is not None
-        assert client.model_name == "gemini-2.0-flash-thinking-exp-01-21"
+        assert client.model_name == "gemini-2.5-flash"
         mock_configure.assert_called_once_with(api_key="test-key")
         mock_model.assert_called_once()
 

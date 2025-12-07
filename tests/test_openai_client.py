@@ -17,7 +17,7 @@ class TestChatGPTClient:
         monkeypatch.setenv("OPENAI_API_KEY", "test-key")
         client = ChatGPTClient()
         assert client is not None
-        assert client.model == "gpt-5"
+        assert client.model == "gpt-5.1"
         mock_openai.assert_called_once()
 
     def test_init_no_api_key(self, monkeypatch: pytest.MonkeyPatch) -> None:

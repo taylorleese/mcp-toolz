@@ -17,9 +17,11 @@ class GeminiClient:
             msg = "Google API key must be provided or set in GOOGLE_API_KEY environment variable"
             raise ValueError(msg)
 
-        self.model_name: str = model or os.getenv("MCP_TOOLZ_GEMINI_MODEL") or "gemini-2.0-flash-thinking-exp-01-21"
+        self.model_name: str = model or os.getenv("MCP_TOOLZ_GEMINI_MODEL") or "gemini-2.5-flash"
+        # Configure with timeout - note: request_options parameter accepts timeout in generate_content
         genai.configure(api_key=self.api_key)
         self.model = genai.GenerativeModel(self.model_name)
+        self.timeout = 30.0  # 30 second timeout
 
     def get_second_opinion(self, context: ContextEntry, question: str | None = None) -> str:
         """Get Gemini's second opinion on a context, or answer a specific question.
@@ -53,7 +55,8 @@ Format your response clearly with sections as needed."""
         # Configure model with system instruction
         model_with_instruction = genai.GenerativeModel(self.model_name, system_instruction=system_instruction)
 
-        response = model_with_instruction.generate_content(user_content)
+        # Use request_options to set timeout
+        response = model_with_instruction.generate_content(user_content, request_options={"timeout": self.timeout})
 
         return str(response.text)
 

@@ -18,8 +18,8 @@ class TestDeepSeekClient:
         client = DeepSeekClient()
         assert client is not None
         assert client.model == "deepseek-chat"
-        # Verify OpenAI client was initialized with DeepSeek base URL
-        mock_openai.assert_called_once_with(api_key="test-key", base_url="https://api.deepseek.com")
+        # Verify OpenAI client was initialized with DeepSeek base URL and timeout
+        mock_openai.assert_called_once_with(api_key="test-key", base_url="https://api.deepseek.com", timeout=30.0)
 
     def test_init_no_api_key(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test initialization fails without API key."""
