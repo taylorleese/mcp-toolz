@@ -1,5 +1,5 @@
 # Build stage
-FROM python:3.14-slim-bookworm@sha256:5d17fc066275d26bb2ffe05bc89367dc665310200b5f4cfa8b294e97dc679bff AS builder
+FROM python:3.14-slim-bookworm@sha256:404ca55875fc24a64f0a09e9ec7d405d725109aec04c9bf0991798fd45c7b898 AS builder
 
 WORKDIR /app
 
@@ -21,7 +21,7 @@ RUN python -m venv /app/.venv && \
 COPY src ./src
 
 # Runtime stage
-FROM python:3.14-slim-bookworm@sha256:5d17fc066275d26bb2ffe05bc89367dc665310200b5f4cfa8b294e97dc679bff
+FROM python:3.14-slim-bookworm@sha256:404ca55875fc24a64f0a09e9ec7d405d725109aec04c9bf0991798fd45c7b898
 
 WORKDIR /app
 
