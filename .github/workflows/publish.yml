@@ -115,7 +115,7 @@ jobs:
           subject-path: 'dist/*'
 
       - name: Sign artifacts with Sigstore
-        uses: sigstore/gh-action-sigstore-python@18a2145062927675d97a5300c843df7c307b9195  # v3.0.1
+        uses: sigstore/gh-action-sigstore-python@16ee7768b00bd3aed8871477470c473ff533f098  # v3.0.1
         with:
           inputs: >-
             ./dist/*.tar.gz
