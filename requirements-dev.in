@@ -13,10 +13,10 @@ pytest-cov==7.0.0
 
 # Code Quality
 black==25.12.0
-ruff==0.14.11
+ruff==0.14.13
 mypy==1.19.1
 isort==7.0.0
-bandit==1.9.2
+bandit==1.9.3
 pydocstyle==6.3.0
 vulture==2.14
 pipdeptree==2.30.0
