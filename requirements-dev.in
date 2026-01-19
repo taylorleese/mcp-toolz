@@ -39,3 +39,6 @@ pip-tools==7.5.2
 # Security fixes for transitive dependencies
 pyasn1==0.6.2
 filelock==3.20.3
+
+# Platform-specific dependencies (required on Linux but not macOS)
+secretstorage==3.5.0
