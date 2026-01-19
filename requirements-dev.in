@@ -35,3 +35,7 @@ sigstore==4.1.0
 
 # Dependency Management
 pip-tools==7.5.2
+
+# Security fixes for transitive dependencies
+pyasn1==0.6.2
+filelock==3.20.3
