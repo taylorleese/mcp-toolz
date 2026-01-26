@@ -31,7 +31,7 @@ pre-commit==4.5.1
 # Publishing
 build==1.4.0
 twine==6.2.0
-sigstore==4.1.0
+sigstore==4.2.0
 
 # Dependency Management
 pip-tools==7.5.2
