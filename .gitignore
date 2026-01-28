@@ -32,6 +32,9 @@ config/
 data/*.db
 data/*.db-journal
 
+# Node
+node_modules/
+
 # IDE
 .vscode/
 .idea/
