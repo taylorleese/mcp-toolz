@@ -2,7 +2,7 @@
 -r requirements.txt
 
 # Build tools (required when using --generate-hashes)
-pip==25.3
+pip==26.0
 setuptools==80.10.2
 
 # Testing
