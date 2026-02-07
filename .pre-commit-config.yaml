@@ -155,7 +155,7 @@ repos:
         entry: pip-audit
         args: [--skip-editable]
         language: python
-        additional_dependencies: [pip-audit==2.7.3]
+        additional_dependencies: [pip-audit==2.7.3, pip==26.0]
         pass_filenames: false
         always_run: true
 
