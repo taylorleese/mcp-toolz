@@ -100,8 +100,7 @@ class ContextStorage:
             # Configure connection for optimal concurrency
             self._configure_connection(conn)
 
-            conn.execute(
-                """
+            conn.execute("""
                 CREATE TABLE IF NOT EXISTS contexts (
                     id TEXT PRIMARY KEY,
                     timestamp TEXT NOT NULL,
@@ -118,8 +117,7 @@ class ContextStorage:
                     gemini_response TEXT,
                     deepseek_response TEXT
                 )
-            """
-            )
+            """)
             conn.execute("CREATE INDEX IF NOT EXISTS idx_type ON contexts(type)")
             conn.execute("CREATE INDEX IF NOT EXISTS idx_timestamp ON contexts(timestamp)")
             conn.execute("CREATE INDEX IF NOT EXISTS idx_title ON contexts(title COLLATE NOCASE)")
@@ -136,8 +134,7 @@ class ContextStorage:
                 conn.execute("ALTER TABLE contexts ADD COLUMN deepseek_response TEXT")
 
             # Todo snapshots table
-            conn.execute(
-                """
+            conn.execute("""
                 CREATE TABLE IF NOT EXISTS todo_snapshots (
                     id TEXT PRIMARY KEY,
                     timestamp TEXT NOT NULL,
@@ -150,8 +147,7 @@ class ContextStorage:
                     metadata TEXT,
                     FOREIGN KEY (session_context_id) REFERENCES contexts(id)
                 )
-            """
-            )
+            """)
             conn.execute("CREATE INDEX IF NOT EXISTS idx_todo_project ON todo_snapshots(project_path)")
             conn.execute("CREATE INDEX IF NOT EXISTS idx_todo_timestamp ON todo_snapshots(timestamp)")
             conn.execute("CREATE INDEX IF NOT EXISTS idx_todo_active ON todo_snapshots(is_active)")
