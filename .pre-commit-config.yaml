@@ -153,12 +153,11 @@ repos:
       - id: pip-audit
         name: pip-audit
         entry: pip-audit
-        args: [--skip-editable, --ignore-vuln, GHSA-4xh5-x5gv-qwph]
+        args: [--skip-editable]
         language: python
-        additional_dependencies: [pip-audit==2.7.3]
+        additional_dependencies: [pip-audit==2.7.3, pip==26.0]
         pass_filenames: false
         always_run: true
-        # TODO: Remove GHSA-4xh5-x5gv-qwph ignore when pip 25.3 is released
 
       - id: pipdeptree
         name: pipdeptree
