@@ -11,3 +11,4 @@ urllib3==2.6.3
 
 # Security fixes for transitive dependencies
 pyasn1==0.6.2
+protobuf==5.29.6
