@@ -3,7 +3,7 @@ repos:
   # GENERIC FILE CHECKS
   # ============================================================================
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
@@ -21,7 +21,7 @@ repos:
   # PYTHON CHECKS
   # ============================================================================
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-ast
       - id: check-docstring-first
@@ -41,13 +41,13 @@ repos:
         additional_dependencies: [autoflake==2.3.1]
 
   - repo: https://github.com/psf/black
-    rev: 24.10.0
+    rev: 26.1.0
     hooks:
       - id: black
         language_version: python3.13
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.8.4
+    rev: v0.15.0
     hooks:
       - id: ruff
         args: [--fix]
@@ -69,7 +69,7 @@ repos:
         additional_dependencies: [flake8==7.1.1]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.13.0
+    rev: v1.19.1
     hooks:
       - id: mypy
         additional_dependencies:
@@ -86,7 +86,7 @@ repos:
         args: [--config-file=pyproject.toml]
 
   - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.10
+    rev: 1.9.3
     hooks:
       - id: bandit
         args: [-c, pyproject.toml]
@@ -108,13 +108,13 @@ repos:
   # SHELL SCRIPT CHECKS
   # ============================================================================
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-executables-have-shebangs
       - id: check-shebang-scripts-are-executable
 
   - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.10.0.1
+    rev: v0.11.0.1
     hooks:
       - id: shellcheck
         args: [--severity=warning]
@@ -123,24 +123,24 @@ repos:
   # OTHER TOOL CHECKS
   # ============================================================================
   - repo: https://github.com/mrtazz/checkmake
-    rev: 0.2.2
+    rev: v0.3.0
     hooks:
       - id: checkmake
         args: [--config, .checkmake]
 
   - repo: https://github.com/hadolint/hadolint
-    rev: v2.12.0
+    rev: v2.14.0
     hooks:
       - id: hadolint-docker
 
   - repo: https://github.com/adrienverge/yamllint
-    rev: v1.35.1
+    rev: v1.38.0
     hooks:
       - id: yamllint
         args: [--strict, -d, "{extends: default, rules: {line-length: {max: 140}, document-start: disable}}"]
 
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.43.0
+    rev: v0.47.0
     hooks:
       - id: markdownlint
         args: [--fix, --config, .markdownlint.json]
