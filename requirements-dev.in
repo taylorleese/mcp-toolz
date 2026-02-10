@@ -3,7 +3,7 @@
 
 # Build tools (required when using --generate-hashes)
 pip==26.0
-setuptools==80.10.2
+setuptools==82.0.0
 
 # Testing
 pytest==9.0.2
