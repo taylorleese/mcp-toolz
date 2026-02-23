@@ -15,7 +15,7 @@ pytest-cov==7.0.0
 black==26.1.0
 ruff==0.15.1
 mypy==1.19.1
-isort==7.0.0
+isort==8.0.0
 bandit==1.9.3
 pydocstyle==6.3.0
 vulture==2.14
