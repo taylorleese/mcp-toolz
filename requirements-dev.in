@@ -13,13 +13,13 @@ pytest-cov==7.0.0
 
 # Code Quality
 black==26.1.0
-ruff==0.15.1
+ruff==0.15.2
 mypy==1.19.1
 isort==8.0.0
-bandit==1.9.3
+bandit==1.9.4
 pydocstyle==6.3.0
 vulture==2.14
-pipdeptree==2.30.0
+pipdeptree==2.31.0
 pip-audit==2.10.0
 
 # Type Stubs
@@ -38,7 +38,7 @@ pip-tools==7.5.3
 
 # Security fixes for transitive dependencies
 pyasn1==0.6.2
-filelock==3.24.2
+filelock==3.24.3
 jaraco-context==6.1.0
 
 # Platform-specific dependencies (required on Linux but not macOS)
