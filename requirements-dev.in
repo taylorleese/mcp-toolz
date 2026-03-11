@@ -3,7 +3,7 @@
 
 # Build tools (required when using --generate-hashes)
 pip==26.0.1
-setuptools==82.0.0
+setuptools==82.0.1
 
 # Testing
 pytest==9.0.2
@@ -12,13 +12,13 @@ pytest-xdist==3.8.0
 pytest-cov==7.0.0
 
 # Code Quality
-black==26.1.0
-ruff==0.15.2
+black==26.3.0
+ruff==0.15.5
 mypy==1.19.1
-isort==8.0.0
+isort==8.0.1
 bandit==1.9.4
 pydocstyle==6.3.0
-vulture==2.14
+vulture==2.15
 pipdeptree==2.31.0
 pip-audit==2.10.0
 
@@ -38,8 +38,8 @@ pip-tools==7.5.3
 
 # Security fixes for transitive dependencies
 pyasn1==0.6.2
-filelock==3.24.3
-jaraco-context==6.1.0
+filelock==3.25.1
+jaraco-context==6.1.1
 
 # Platform-specific dependencies (required on Linux but not macOS)
 secretstorage==3.5.0
