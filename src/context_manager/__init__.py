@@ -1,1 +1,1 @@
-"""Context manager for saving and querying contexts."""
+"""LLM client implementations for multi-AI perspectives."""

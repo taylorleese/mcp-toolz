@@ -5,7 +5,6 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from context_manager.deepseek_client import DeepSeekClient
-from models import ContextEntry
 
 
 class TestDeepSeekClient:
@@ -18,7 +17,6 @@ class TestDeepSeekClient:
         client = DeepSeekClient()
         assert client is not None
         assert client.model == "deepseek-chat"
-        # Verify OpenAI client was initialized with DeepSeek base URL and timeout
         mock_openai.assert_called_once_with(api_key="test-key", base_url="https://api.deepseek.com", timeout=30.0)
 
     def test_init_no_api_key(self, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -28,11 +26,10 @@ class TestDeepSeekClient:
             DeepSeekClient()
 
     @patch("context_manager.deepseek_client.OpenAI")
-    def test_get_second_opinion(self, mock_openai: MagicMock, sample_context: ContextEntry, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_get_second_opinion(self, mock_openai: MagicMock, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test getting a second opinion."""
         monkeypatch.setenv("DEEPSEEK_API_KEY", "test-key")
 
-        # Mock DeepSeek response (OpenAI-compatible)
         mock_client = MagicMock()
         mock_response = MagicMock()
         mock_response.choices = [MagicMock()]
@@ -41,19 +38,16 @@ class TestDeepSeekClient:
         mock_openai.return_value = mock_client
 
         client = DeepSeekClient()
-        response = client.get_second_opinion(sample_context)
+        response = client.get_second_opinion("some code to review")
 
         assert response == "This code looks efficient"
         assert mock_client.chat.completions.create.called
 
     @patch("context_manager.deepseek_client.OpenAI")
-    def test_get_second_opinion_with_question(
-        self, mock_openai: MagicMock, sample_context: ContextEntry, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_get_second_opinion_with_question(self, mock_openai: MagicMock, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test getting a second opinion with a custom question."""
         monkeypatch.setenv("DEEPSEEK_API_KEY", "test-key")
 
-        # Mock DeepSeek response
         mock_client = MagicMock()
         mock_response = MagicMock()
         mock_response.choices = [MagicMock()]
@@ -62,85 +56,30 @@ class TestDeepSeekClient:
         mock_openai.return_value = mock_client
 
         client = DeepSeekClient()
-        response = client.get_second_opinion(sample_context, "Is this optimal?")
+        response = client.get_second_opinion("some code", "Is this optimal?")
 
         assert response == "Yes, the implementation is optimal"
 
     @patch("context_manager.deepseek_client.OpenAI")
-    def test_format_context_for_deepseek(
-        self, mock_openai: MagicMock, sample_context: ContextEntry, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
-        """Test formatting context for DeepSeek."""
+    def test_format_prompt(self, mock_openai: MagicMock, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Test formatting prompt."""
         monkeypatch.setenv("DEEPSEEK_API_KEY", "test-key")
         mock_openai.return_value = MagicMock()
 
         client = DeepSeekClient()
-        formatted = client._format_context_for_deepseek(sample_context)
+        formatted = client._format_prompt("some context text")
 
-        assert "Test Context" in formatted
-        assert sample_context.type in formatted
-        assert "test.py" in formatted or "hello" in formatted
+        assert "some context text" in formatted
+        assert "second opinion" in formatted
 
     @patch("context_manager.deepseek_client.OpenAI")
-    def test_format_context_with_messages(self, mock_openai: MagicMock, monkeypatch: pytest.MonkeyPatch) -> None:
-        """Test formatting context with messages."""
-        from models import ContextContent, ContextEntry
-
+    def test_format_prompt_with_question(self, mock_openai: MagicMock, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Test formatting prompt with a question."""
         monkeypatch.setenv("DEEPSEEK_API_KEY", "test-key")
         mock_openai.return_value = MagicMock()
 
-        context = ContextEntry(
-            type="conversation",
-            title="Test",
-            content=ContextContent(messages=["Message 1", "Message 2"]),
-            tags=[],
-            project_path="/test",
-        )
-
         client = DeepSeekClient()
-        formatted = client._format_context_for_deepseek(context)
+        formatted = client._format_prompt("some context text", "Is this correct?")
 
-        assert "Message 1" in formatted
-        assert "Message 2" in formatted
-
-    @patch("context_manager.deepseek_client.OpenAI")
-    def test_format_context_with_suggestions(self, mock_openai: MagicMock, monkeypatch: pytest.MonkeyPatch) -> None:
-        """Test formatting context with suggestions."""
-        from models import ContextContent, ContextEntry
-
-        monkeypatch.setenv("DEEPSEEK_API_KEY", "test-key")
-        mock_openai.return_value = MagicMock()
-
-        context = ContextEntry(
-            type="suggestion",
-            title="Test",
-            content=ContextContent(suggestions="Implement caching layer"),
-            tags=[],
-            project_path="/test",
-        )
-
-        client = DeepSeekClient()
-        formatted = client._format_context_for_deepseek(context)
-
-        assert "Implement caching layer" in formatted
-
-    @patch("context_manager.deepseek_client.OpenAI")
-    def test_format_context_with_errors(self, mock_openai: MagicMock, monkeypatch: pytest.MonkeyPatch) -> None:
-        """Test formatting context with errors."""
-        from models import ContextContent, ContextEntry
-
-        monkeypatch.setenv("DEEPSEEK_API_KEY", "test-key")
-        mock_openai.return_value = MagicMock()
-
-        context = ContextEntry(
-            type="error",
-            title="Test",
-            content=ContextContent(errors="IndexError: list index out of range"),
-            tags=[],
-            project_path="/test",
-        )
-
-        client = DeepSeekClient()
-        formatted = client._format_context_for_deepseek(context)
-
-        assert "IndexError: list index out of range" in formatted
+        assert "some context text" in formatted
+        assert "Is this correct?" in formatted

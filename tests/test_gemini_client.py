@@ -5,7 +5,6 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from context_manager.gemini_client import GeminiClient
-from models import ContextEntry
 
 
 class TestGeminiClient:
@@ -30,13 +29,10 @@ class TestGeminiClient:
 
     @patch("context_manager.gemini_client.genai.configure")
     @patch("context_manager.gemini_client.genai.GenerativeModel")
-    def test_get_second_opinion(
-        self, mock_model: MagicMock, mock_configure: MagicMock, sample_context: ContextEntry, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_get_second_opinion(self, mock_model: MagicMock, mock_configure: MagicMock, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test getting a second opinion."""
         monkeypatch.setenv("GOOGLE_API_KEY", "test-key")
 
-        # Mock Gemini response
         mock_instance = MagicMock()
         mock_response = MagicMock()
         mock_response.text = "This is a solid implementation"
@@ -44,7 +40,7 @@ class TestGeminiClient:
         mock_model.return_value = mock_instance
 
         client = GeminiClient()
-        response = client.get_second_opinion(sample_context)
+        response = client.get_second_opinion("some code to review")
 
         assert response == "This is a solid implementation"
         assert mock_instance.generate_content.called
@@ -52,12 +48,11 @@ class TestGeminiClient:
     @patch("context_manager.gemini_client.genai.configure")
     @patch("context_manager.gemini_client.genai.GenerativeModel")
     def test_get_second_opinion_with_question(
-        self, mock_model: MagicMock, mock_configure: MagicMock, sample_context: ContextEntry, monkeypatch: pytest.MonkeyPatch
+        self, mock_model: MagicMock, mock_configure: MagicMock, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Test getting a second opinion with a custom question."""
         monkeypatch.setenv("GOOGLE_API_KEY", "test-key")
 
-        # Mock Gemini response
         mock_instance = MagicMock()
         mock_response = MagicMock()
         mock_response.text = "Yes, this approach is correct"
@@ -65,87 +60,30 @@ class TestGeminiClient:
         mock_model.return_value = mock_instance
 
         client = GeminiClient()
-        response = client.get_second_opinion(sample_context, "Is this correct?")
+        response = client.get_second_opinion("some code", "Is this correct?")
 
         assert response == "Yes, this approach is correct"
 
     @patch("context_manager.gemini_client.genai.configure")
     @patch("context_manager.gemini_client.genai.GenerativeModel")
-    def test_format_context_for_gemini(
-        self, mock_model: MagicMock, mock_configure: MagicMock, sample_context: ContextEntry, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
-        """Test formatting context for Gemini."""
+    def test_format_prompt(self, mock_model: MagicMock, mock_configure: MagicMock, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Test formatting prompt."""
         monkeypatch.setenv("GOOGLE_API_KEY", "test-key")
 
         client = GeminiClient()
-        formatted = client._format_context_for_gemini(sample_context)
+        formatted = client._format_prompt("some context text")
 
-        assert "Test Context" in formatted
-        assert sample_context.type in formatted
-        assert "test.py" in formatted or "hello" in formatted
+        assert "some context text" in formatted
+        assert "second opinion" in formatted
 
     @patch("context_manager.gemini_client.genai.configure")
     @patch("context_manager.gemini_client.genai.GenerativeModel")
-    def test_format_context_with_messages(self, mock_model: MagicMock, mock_configure: MagicMock, monkeypatch: pytest.MonkeyPatch) -> None:
-        """Test formatting context with messages."""
-        from models import ContextContent, ContextEntry
-
+    def test_format_prompt_with_question(self, mock_model: MagicMock, mock_configure: MagicMock, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Test formatting prompt with a question."""
         monkeypatch.setenv("GOOGLE_API_KEY", "test-key")
 
-        context = ContextEntry(
-            type="conversation",
-            title="Test",
-            content=ContextContent(messages=["Message 1", "Message 2"]),
-            tags=[],
-            project_path="/test",
-        )
-
         client = GeminiClient()
-        formatted = client._format_context_for_gemini(context)
+        formatted = client._format_prompt("some context text", "Is this correct?")
 
-        assert "Message 1" in formatted
-        assert "Message 2" in formatted
-
-    @patch("context_manager.gemini_client.genai.configure")
-    @patch("context_manager.gemini_client.genai.GenerativeModel")
-    def test_format_context_with_suggestions(
-        self, mock_model: MagicMock, mock_configure: MagicMock, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
-        """Test formatting context with suggestions."""
-        from models import ContextContent, ContextEntry
-
-        monkeypatch.setenv("GOOGLE_API_KEY", "test-key")
-
-        context = ContextEntry(
-            type="suggestion",
-            title="Test",
-            content=ContextContent(suggestions="Use dependency injection"),
-            tags=[],
-            project_path="/test",
-        )
-
-        client = GeminiClient()
-        formatted = client._format_context_for_gemini(context)
-
-        assert "Use dependency injection" in formatted
-
-    @patch("context_manager.gemini_client.genai.configure")
-    @patch("context_manager.gemini_client.genai.GenerativeModel")
-    def test_format_context_with_errors(self, mock_model: MagicMock, mock_configure: MagicMock, monkeypatch: pytest.MonkeyPatch) -> None:
-        """Test formatting context with errors."""
-        from models import ContextContent, ContextEntry
-
-        monkeypatch.setenv("GOOGLE_API_KEY", "test-key")
-
-        context = ContextEntry(
-            type="error",
-            title="Test",
-            content=ContextContent(errors="ValueError: invalid literal"),
-            tags=[],
-            project_path="/test",
-        )
-
-        client = GeminiClient()
-        formatted = client._format_context_for_gemini(context)
-
-        assert "ValueError: invalid literal" in formatted
+        assert "some context text" in formatted
+        assert "Is this correct?" in formatted

@@ -1,9 +1,9 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
   "name": "io.github.taylorleese/mcp-toolz",
-  "description": "MCP server for Claude Code providing context management, todo persistence, and multi-AI perspectives. Share contexts and todos across sessions, compare insights from ChatGPT, Claude, Gemini, and DeepSeek, and access everything via MCP tools.",
+  "description": "MCP server providing multi-AI perspective tools. Get feedback from ChatGPT, Claude, Gemini, and DeepSeek via MCP tools.",
   "title": "MCP Toolz",
-  "version": "0.1.3",
+  "version": "0.4.0",
   "repository": {
     "url": "https://github.com/taylorleese/mcp-toolz",
     "source": "github"
@@ -13,7 +13,7 @@
       "registryType": "pypi",
       "registryBaseUrl": "https://pypi.org",
       "identifier": "mcp-toolz",
-      "version": "0.1.3",
+      "version": "0.4.0",
       "runtimeHint": "uvx",
       "transport": {
         "type": "stdio"
@@ -23,12 +23,6 @@
         "mcp_server"
       ],
       "environmentVariables": [
-        {
-          "name": "MCP_TOOLZ_DB_PATH",
-          "description": "Path to SQLite database for contexts and todos (defaults to ~/.mcp-toolz/contexts.db)",
-          "isRequired": false,
-          "default": "~/.mcp-toolz/contexts.db"
-        },
         {
           "name": "OPENAI_API_KEY",
           "description": "OpenAI API key for ask_chatgpt tool functionality",
@@ -87,14 +81,11 @@
       "mcp",
       "model-context-protocol",
       "claude-code",
-      "context-management",
-      "todo-persistence",
       "ai-assistant",
       "chatgpt",
       "anthropic",
       "gemini",
-      "deepseek",
-      "session-continuity"
+      "deepseek"
     ]
   }
 }

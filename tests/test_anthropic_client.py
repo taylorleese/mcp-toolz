@@ -6,7 +6,6 @@ import pytest
 from anthropic.types import TextBlock
 
 from context_manager.anthropic_client import ClaudeClient
-from models import ContextEntry
 
 
 class TestClaudeClient:
@@ -28,11 +27,10 @@ class TestClaudeClient:
             ClaudeClient()
 
     @patch("context_manager.anthropic_client.Anthropic")
-    def test_get_second_opinion(self, mock_anthropic: MagicMock, sample_context: ContextEntry, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_get_second_opinion(self, mock_anthropic: MagicMock, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test getting a second opinion."""
         monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
 
-        # Mock Anthropic response
         mock_client = MagicMock()
         mock_response = MagicMock()
         mock_text_block = MagicMock(spec=TextBlock)
@@ -42,19 +40,16 @@ class TestClaudeClient:
         mock_anthropic.return_value = mock_client
 
         client = ClaudeClient()
-        response = client.get_second_opinion(sample_context)
+        response = client.get_second_opinion("some code to review")
 
         assert response == "This looks good to me"
         assert mock_client.messages.create.called
 
     @patch("context_manager.anthropic_client.Anthropic")
-    def test_get_second_opinion_with_question(
-        self, mock_anthropic: MagicMock, sample_context: ContextEntry, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_get_second_opinion_with_question(self, mock_anthropic: MagicMock, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test getting a second opinion with a custom question."""
         monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
 
-        # Mock Anthropic response
         mock_client = MagicMock()
         mock_response = MagicMock()
         mock_text_block = MagicMock(spec=TextBlock)
@@ -64,85 +59,30 @@ class TestClaudeClient:
         mock_anthropic.return_value = mock_client
 
         client = ClaudeClient()
-        response = client.get_second_opinion(sample_context, "Is this right?")
+        response = client.get_second_opinion("some code", "Is this right?")
 
         assert response == "Yes, that's correct"
 
     @patch("context_manager.anthropic_client.Anthropic")
-    def test_format_context_for_claude(
-        self, mock_anthropic: MagicMock, sample_context: ContextEntry, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
-        """Test formatting context for Claude."""
+    def test_format_prompt(self, mock_anthropic: MagicMock, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Test formatting prompt."""
         monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
         mock_anthropic.return_value = MagicMock()
 
         client = ClaudeClient()
-        formatted = client._format_context_for_claude(sample_context)
+        formatted = client._format_prompt("some context text")
 
-        assert "Test Context" in formatted
-        assert sample_context.type in formatted
-        assert "test.py" in formatted or "hello" in formatted
+        assert "some context text" in formatted
+        assert "second opinion" in formatted
 
     @patch("context_manager.anthropic_client.Anthropic")
-    def test_format_context_with_messages(self, mock_anthropic: MagicMock, monkeypatch: pytest.MonkeyPatch) -> None:
-        """Test formatting context with messages."""
-        from models import ContextContent, ContextEntry
-
+    def test_format_prompt_with_question(self, mock_anthropic: MagicMock, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Test formatting prompt with a question."""
         monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
         mock_anthropic.return_value = MagicMock()
 
-        context = ContextEntry(
-            type="conversation",
-            title="Test",
-            content=ContextContent(messages=["Message 1", "Message 2"]),
-            tags=[],
-            project_path="/test",
-        )
-
         client = ClaudeClient()
-        formatted = client._format_context_for_claude(context)
+        formatted = client._format_prompt("some context text", "Is this correct?")
 
-        assert "Message 1" in formatted
-        assert "Message 2" in formatted
-
-    @patch("context_manager.anthropic_client.Anthropic")
-    def test_format_context_with_suggestions(self, mock_anthropic: MagicMock, monkeypatch: pytest.MonkeyPatch) -> None:
-        """Test formatting context with suggestions."""
-        from models import ContextContent, ContextEntry
-
-        monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
-        mock_anthropic.return_value = MagicMock()
-
-        context = ContextEntry(
-            type="suggestion",
-            title="Test",
-            content=ContextContent(suggestions="Use type hints"),
-            tags=[],
-            project_path="/test",
-        )
-
-        client = ClaudeClient()
-        formatted = client._format_context_for_claude(context)
-
-        assert "Use type hints" in formatted
-
-    @patch("context_manager.anthropic_client.Anthropic")
-    def test_format_context_with_errors(self, mock_anthropic: MagicMock, monkeypatch: pytest.MonkeyPatch) -> None:
-        """Test formatting context with errors."""
-        from models import ContextContent, ContextEntry
-
-        monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
-        mock_anthropic.return_value = MagicMock()
-
-        context = ContextEntry(
-            type="error",
-            title="Test",
-            content=ContextContent(errors="TypeError: expected str"),
-            tags=[],
-            project_path="/test",
-        )
-
-        client = ClaudeClient()
-        formatted = client._format_context_for_claude(context)
-
-        assert "TypeError: expected str" in formatted
+        assert "some context text" in formatted
+        assert "Is this correct?" in formatted
