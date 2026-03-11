@@ -42,12 +42,6 @@ ENV PYTHONUNBUFFERED=1
 RUN useradd -m -u 1000 app && chown -R app:app /app
 USER app
 
-# Create directory for database with proper permissions
-RUN mkdir -p /home/app/.mcp-toolz
-
-# Set default database path
-ENV MCP_TOOLZ_DB_PATH=/home/app/.mcp-toolz/contexts.db
-
 # Health check - verify the MCP server process is running
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD pgrep -f "python -m mcp_server" > /dev/null || exit 1

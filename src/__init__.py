@@ -1,1 +1,1 @@
-"""MCP Toolz - Context management, todo persistence, and AI second opinions."""
+"""MCP Toolz - Multi-LLM tools via MCP."""
