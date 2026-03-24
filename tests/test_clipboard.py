@@ -29,6 +29,7 @@ class TestGetClipboardImageBase64:
         mock_sys.platform = "linux"
         assert get_clipboard_image_base64() is None
 
+    @patch("context_manager.clipboard.sys.platform", "darwin")
     @patch("context_manager.clipboard.subprocess.run")
     def test_successful_capture(self, mock_run: MagicMock) -> None:
         """Test successful image capture from clipboard."""
@@ -44,6 +45,7 @@ class TestGetClipboardImageBase64:
         assert result == SAMPLE_PNG_BASE64
         mock_run.assert_called_once()
 
+    @patch("context_manager.clipboard.sys.platform", "darwin")
     @patch("context_manager.clipboard.subprocess.run")
     def test_no_image_in_clipboard(self, mock_run: MagicMock) -> None:
         """Test returns None when clipboard has no image."""
@@ -56,6 +58,7 @@ class TestGetClipboardImageBase64:
 
         assert get_clipboard_image_base64() is None
 
+    @patch("context_manager.clipboard.sys.platform", "darwin")
     @patch("context_manager.clipboard.subprocess.run")
     def test_timeout_returns_none(self, mock_run: MagicMock) -> None:
         """Test returns None on subprocess timeout."""
@@ -63,6 +66,7 @@ class TestGetClipboardImageBase64:
 
         assert get_clipboard_image_base64() is None
 
+    @patch("context_manager.clipboard.sys.platform", "darwin")
     @patch("context_manager.clipboard.subprocess.run")
     def test_oserror_returns_none(self, mock_run: MagicMock) -> None:
         """Test returns None on OSError."""
