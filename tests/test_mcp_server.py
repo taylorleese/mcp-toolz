@@ -1,8 +1,10 @@
 """Tests for MCP server functionality."""
 
+import base64
 from unittest.mock import MagicMock, patch
 
 import pytest
+from mcp.types import ImageContent, TextContent
 
 from mcp_server.server import ContextMCPServer
 
@@ -21,12 +23,13 @@ class TestMCPServerTools:
         """Test listing available tools."""
         tools = await mcp_server.list_tools()
 
-        assert len(tools) == 4
+        assert len(tools) == 5
         tool_names = [t.name for t in tools]
         assert "ask_chatgpt" in tool_names
         assert "ask_claude" in tool_names
         assert "ask_gemini" in tool_names
         assert "ask_deepseek" in tool_names
+        assert "paste_image" in tool_names
 
     @pytest.mark.asyncio
     @patch("mcp_server.server.ChatGPTClient")
@@ -43,6 +46,7 @@ class TestMCPServerTools:
         result = await mcp_server.call_tool("ask_chatgpt", {"context": "some code to review"})
 
         assert result is not None
+        assert isinstance(result[0], TextContent)
         assert "Mocked ChatGPT response" in result[0].text
         mock_client.get_second_opinion.assert_called_once_with("some code to review", None)
 
@@ -61,6 +65,7 @@ class TestMCPServerTools:
         result = await mcp_server.call_tool("ask_chatgpt", {"context": "some code", "question": "Is this correct?"})
 
         assert result is not None
+        assert isinstance(result[0], TextContent)
         assert "ChatGPT's Answer:" in result[0].text
         assert "Answer to question" in result[0].text
         mock_client.get_second_opinion.assert_called_once_with("some code", "Is this correct?")
@@ -80,6 +85,7 @@ class TestMCPServerTools:
         result = await mcp_server.call_tool("ask_claude", {"context": "some code to review"})
 
         assert result is not None
+        assert isinstance(result[0], TextContent)
         assert "Mocked Claude response" in result[0].text
 
     @pytest.mark.asyncio
@@ -97,6 +103,7 @@ class TestMCPServerTools:
         result = await mcp_server.call_tool("ask_gemini", {"context": "some code to review"})
 
         assert result is not None
+        assert isinstance(result[0], TextContent)
         assert "Mocked Gemini response" in result[0].text
 
     @pytest.mark.asyncio
@@ -114,6 +121,7 @@ class TestMCPServerTools:
         result = await mcp_server.call_tool("ask_deepseek", {"context": "some code to review"})
 
         assert result is not None
+        assert isinstance(result[0], TextContent)
         assert "Mocked DeepSeek response" in result[0].text
 
     @pytest.mark.asyncio
@@ -131,6 +139,7 @@ class TestMCPServerTools:
         result = await mcp_server.call_tool("ask_chatgpt", {"context": "some code"})
 
         assert result is not None
+        assert isinstance(result[0], TextContent)
         assert "error" in result[0].text.lower()
 
     @pytest.mark.asyncio
@@ -148,6 +157,7 @@ class TestMCPServerTools:
         result = await mcp_server.call_tool("ask_claude", {"context": "some code"})
 
         assert result is not None
+        assert isinstance(result[0], TextContent)
         assert "error" in result[0].text.lower()
 
     @pytest.mark.asyncio
@@ -165,6 +175,7 @@ class TestMCPServerTools:
         result = await mcp_server.call_tool("ask_gemini", {"context": "some code"})
 
         assert result is not None
+        assert isinstance(result[0], TextContent)
         assert "error" in result[0].text.lower()
 
     @pytest.mark.asyncio
@@ -182,7 +193,60 @@ class TestMCPServerTools:
         result = await mcp_server.call_tool("ask_deepseek", {"context": "some code"})
 
         assert result is not None
+        assert isinstance(result[0], TextContent)
         assert "error" in result[0].text.lower()
+
+    @pytest.mark.asyncio
+    @patch("mcp_server.server.get_clipboard_image_base64")
+    async def test_paste_image_tool(
+        self,
+        mock_clipboard: MagicMock,
+        mcp_server: ContextMCPServer,
+    ) -> None:
+        """Test the paste_image tool with a mocked clipboard image."""
+        sample_base64 = base64.b64encode(b"fake-png-data").decode()
+        mock_clipboard.return_value = sample_base64
+
+        result = await mcp_server.call_tool("paste_image", {})
+
+        assert result is not None
+        assert isinstance(result[0], ImageContent)
+        assert result[0].data == sample_base64
+        assert result[0].mimeType == "image/png"
+
+    @pytest.mark.asyncio
+    @patch("mcp_server.server.get_clipboard_image_base64")
+    async def test_paste_image_with_question(
+        self,
+        mock_clipboard: MagicMock,
+        mcp_server: ContextMCPServer,
+    ) -> None:
+        """Test the paste_image tool with a question."""
+        sample_base64 = base64.b64encode(b"fake-png-data").decode()
+        mock_clipboard.return_value = sample_base64
+
+        result = await mcp_server.call_tool("paste_image", {"question": "What is this?"})
+
+        assert len(result) == 2
+        assert isinstance(result[0], ImageContent)
+        assert isinstance(result[1], TextContent)
+        assert "What is this?" in result[1].text
+
+    @pytest.mark.asyncio
+    @patch("mcp_server.server.get_clipboard_image_base64")
+    async def test_paste_image_no_image_in_clipboard(
+        self,
+        mock_clipboard: MagicMock,
+        mcp_server: ContextMCPServer,
+    ) -> None:
+        """Test the paste_image tool when clipboard has no image."""
+        mock_clipboard.return_value = None
+
+        result = await mcp_server.call_tool("paste_image", {})
+
+        assert result is not None
+        assert isinstance(result[0], TextContent)
+        assert "no image" in result[0].text.lower()
 
     @pytest.mark.asyncio
     async def test_unknown_tool(self, mcp_server: ContextMCPServer) -> None:
@@ -190,4 +254,5 @@ class TestMCPServerTools:
         result = await mcp_server.call_tool("unknown_tool_name", {})
 
         assert result is not None
+        assert isinstance(result[0], TextContent)
         assert "unknown" in result[0].text.lower()

@@ -4,9 +4,10 @@ from typing import Any
 
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
-from mcp.types import TextContent, Tool
+from mcp.types import ImageContent, TextContent, Tool
 
 from context_manager.anthropic_client import ClaudeClient
+from context_manager.clipboard import get_clipboard_image_base64
 from context_manager.deepseek_client import DeepSeekClient
 from context_manager.gemini_client import GeminiClient
 from context_manager.openai_client import ChatGPTClient
@@ -94,9 +95,24 @@ class ContextMCPServer:
                     "required": ["context"],
                 },
             ),
+            Tool(
+                name="paste_image",
+                description=(
+                    "Capture an image from the macOS clipboard for analysis. Copy an image to clipboard first, then call this tool."
+                ),
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "question": {
+                            "type": "string",
+                            "description": "Optional question about the image. If not provided, returns the image for general analysis.",
+                        },
+                    },
+                },
+            ),
         ]
 
-    async def call_tool(self, name: str, arguments: dict[str, Any]) -> list[TextContent]:
+    async def call_tool(self, name: str, arguments: dict[str, Any]) -> list[TextContent | ImageContent]:
         """Execute a tool call."""
         if name == "ask_chatgpt":
             context = arguments["context"]
@@ -149,6 +165,17 @@ class ContextMCPServer:
                 return [TextContent(type="text", text=f"{header}\n\n{response}")]
             except ValueError as e:
                 return [TextContent(type="text", text=f"Error: {e}")]
+
+        if name == "paste_image":
+            image_data = get_clipboard_image_base64()
+            if not image_data:
+                return [TextContent(type="text", text="Error: No image found in clipboard. Copy an image first, then try again.")]
+
+            question = arguments.get("question")
+            result: list[TextContent | ImageContent] = [ImageContent(type="image", data=image_data, mimeType="image/png")]
+            if question:
+                result.append(TextContent(type="text", text=f"Question: {question}"))
+            return result
 
         return [TextContent(type="text", text=f"Unknown tool: {name}")]
 
