@@ -12,6 +12,7 @@ Python 3.13+, src layout with `PYTHONPATH=src`.
 - `make format` - Auto-format code
 - `make compile-requirements` - Recompile requirements.txt from requirements.in (uses pip-compile with hashes)
 - `make all` - format + lint + test
+- `make publish` - **ALWAYS use this to release.** Runs tests, lint, commits version bump, creates git tag, pushes, and creates GitHub release. Never create releases or tags manually.
 
 ## Project Structure
 
