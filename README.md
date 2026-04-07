@@ -121,6 +121,21 @@ Get second opinions from multiple LLMs on code, architecture decisions, and impl
 
 - `paste_image` - Capture an image from the macOS clipboard for analysis (supports optional question)
 
+## Claude Code Skills
+
+### `/resolve-github-alerts`
+
+Automatically triages and resolves GitHub security alerts (Dependabot, code scanning, secret scanning). Run it in Claude Code to:
+
+- Fix failing Dependabot PRs (lint/test issues)
+- Bump vulnerable dependencies and recompile requirements
+- Remediate code scanning and secret scanning alerts
+- Submit a single PR with all fixes for manual review
+
+```text
+/resolve-github-alerts
+```
+
 ## Usage Examples
 
 ### Get Multiple AI Perspectives

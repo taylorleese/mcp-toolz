@@ -2,9 +2,8 @@
 name: resolve-github-alerts
 description: >-
   Resolve GitHub security alerts (Dependabot, code scanning, secret
-  scanning). Auto-merges passing Dependabot PRs, fixes failing ones,
-  remediates remaining vulnerability/code/secret alerts, and submits
-  PRs for manual fixes.
+  scanning). Fixes failing Dependabot PRs, remediates remaining
+  vulnerability/code/secret alerts, and submits PRs for manual review.
 ---
 
 # Resolve GitHub Alerts
@@ -85,10 +84,10 @@ Run all four phases in order. Track results for the final summary.
 
 ---
 
-### Phase 1: Auto-merge Passing Dependabot PRs
+### Phase 1: Triage Dependabot PRs
 
-**Goal**: Merge Dependabot PRs that have passing CI, fix ones with CI
-failures if possible.
+**Goal**: List open Dependabot PRs, check CI status, and fix ones with
+CI failures if possible. Never auto-merge — leave merging to the user.
 
 #### Step 1.1: List open Dependabot PRs
 
@@ -106,21 +105,11 @@ gh pr checks <PR_NUMBER> --repo $OWNER/$REPO
 
 Categorize each PR:
 
-- **Passing**: All required checks are successful
+- **Passing**: All required checks are successful — ready for manual merge
 - **Failing**: One or more checks failed
 - **Pending**: Checks still running
 
-#### Step 1.3: Auto-merge passing PRs
-
-For each passing Dependabot PR:
-
-```bash
-gh pr merge <PR_NUMBER> --repo $OWNER/$REPO --squash --auto
-```
-
-Record the PR number and title as "merged".
-
-#### Step 1.4: Fix failing Dependabot PRs
+#### Step 1.3: Fix failing Dependabot PRs
 
 For each failing Dependabot PR:
 
@@ -139,14 +128,12 @@ For each failing Dependabot PR:
      fix the tests, and push.
    - **Security check failures**: Do NOT attempt to fix. Skip and
      report as "unfixable - security check failure".
-4. After pushing fixes, wait briefly and re-check CI status.
-5. If CI passes after fix, merge (squash). Record as "fixed and merged".
-6. If still failing, record as "attempted fix, still failing".
+4. After pushing fixes, re-check CI status and report result.
 
-#### Step 1.5: Report Phase 1 results
+#### Step 1.4: Report Phase 1 results
 
-Track counts: merged, fixed and merged, attempted fix (still failing),
-pending, skipped.
+Track counts: passing (ready to merge), fixed (ready to merge),
+attempted fix (still failing), pending, skipped.
 
 ---
 
@@ -331,10 +318,10 @@ After all phases complete, output a summary table:
 ## Security Alert Resolution Summary
 
 ### Phase 1: Dependabot PRs
-| PR | Title | Action | Result |
-| ---- | ------- | -------- | -------- |
-| #XX | Bump foo from 1.0 to 1.1 | Auto-merged | Success |
-| #YY | Bump bar from 2.0 to 2.1 | Fixed lint + merged | Success |
+| PR | Title | CI Status | Action |
+| ---- | ------- | ---------- | -------- |
+| #XX | Bump foo from 1.0 to 1.1 | Passing | Ready to merge |
+| #YY | Bump bar from 2.0 to 2.1 | Fixed | Ready to merge |
 
 ### Phase 2: Dependabot Alerts
 | Alert | Package | Severity | Action | Result |
@@ -352,7 +339,7 @@ After all phases complete, output a summary table:
 | #NN | secret-type | False positive | Noted for manual review |
 
 ### Totals
-- Dependabot PRs merged: X
+- Dependabot PRs ready to merge: X
 - Dependabot alerts fixed: X
 - Code scanning alerts fixed: X
 - Secret scanning alerts handled: X

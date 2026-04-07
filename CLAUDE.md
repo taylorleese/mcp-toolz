@@ -34,6 +34,10 @@ Python 3.13+, src layout with `PYTHONPATH=src`.
 - MCP server tests patch at `mcp_server.server.ClientClass` level
 - pytest markers: unit, integration, slow
 
+## Skills
+
+- `/resolve-github-alerts` - Automatically triages and resolves GitHub security alerts (Dependabot, code scanning, secret scanning). Fixes failing Dependabot PRs, bumps vulnerable dependencies, and submits PRs for manual review.
+
 ## Dependencies
 
 - After changing requirements.in, run `make compile-requirements` to regenerate hashed requirements.txt
