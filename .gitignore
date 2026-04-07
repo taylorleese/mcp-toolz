@@ -42,8 +42,9 @@ node_modules/
 *.swo
 *~
 
-# Claude Code local settings
-.claude/
+# Claude Code local settings (skills are checked in)
+.claude/*
+!.claude/skills/
 
 # OS
 .DS_Store
