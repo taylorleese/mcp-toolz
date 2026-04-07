@@ -40,6 +40,7 @@ pip-tools==7.5.3
 pyasn1==0.6.3
 filelock==3.25.2
 jaraco-context==6.1.1
+pygments==2.20.0
 
 # Platform-specific dependencies (required on Linux but not macOS)
 secretstorage==3.5.0
