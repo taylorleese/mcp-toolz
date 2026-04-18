@@ -18,6 +18,7 @@ jobs:
     name: Resolve alerts
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    environment: security-alerts-bot
     permissions:
       contents: write
       pull-requests: write
