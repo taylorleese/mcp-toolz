@@ -1,0 +1,57 @@
+name: Resolve GitHub Security Alerts
+
+"on":
+  schedule:
+    # Saturday 09:00 America/Los_Angeles during PDT (16:00 UTC).
+    # During PST (winter), this runs at 08:00 local — cron is fixed UTC.
+    - cron: '0 16 * * 6'
+  workflow_dispatch:
+
+permissions: read-all
+
+concurrency:
+  group: resolve-github-alerts
+  cancel-in-progress: false
+
+jobs:
+  resolve:
+    name: Resolve alerts
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      security-events: read
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v5
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.RESOLVE_ALERTS_PAT }}
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6
+        with:
+          python-version: "3.13"
+          cache: 'pip'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --require-hashes --no-cache-dir -r requirements-pip.txt
+          pip install --require-hashes --no-cache-dir -r requirements-dev.txt
+
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Run /resolve-github-alerts
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL: claude-opus-4-7
+          GH_TOKEN: ${{ secrets.RESOLVE_ALERTS_PAT }}
+        run: claude --print --dangerously-skip-permissions "/resolve-github-alerts"
