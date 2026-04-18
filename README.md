@@ -16,12 +16,11 @@ mcp-name: io.github.taylorleese/mcp-toolz
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/taylorleese/mcp-toolz/badge)](https://scorecard.dev/viewer/?uri=github.com/taylorleese/mcp-toolz)
 [![Dependabot](https://img.shields.io/badge/Dependabot-enabled-blue?logo=dependabot)](https://github.com/taylorleese/mcp-toolz/blob/main/.github/dependabot.yml)
 
-MCP server for Claude Code that provides multi-LLM feedback tools and clipboard image capture.
+MCP server for Claude Code that provides multi-LLM feedback tools.
 
 ## Features
 
 - **Multi-LLM Feedback**: Get second opinions from ChatGPT (OpenAI), Claude (Anthropic), Gemini (Google), and DeepSeek
-- **Clipboard Image Capture**: Paste images from your macOS clipboard directly into Claude Code for analysis
 - **MCP Integration**: Works with Claude Code via the Model Context Protocol
 
 ## Quick Start
@@ -117,10 +116,6 @@ Get second opinions from multiple LLMs on code, architecture decisions, and impl
 - `ask_gemini` - Get Gemini's analysis (supports custom questions)
 - `ask_deepseek` - Get DeepSeek's analysis (supports custom questions)
 
-### Clipboard Image Tool
-
-- `paste_image` - Capture an image from the macOS clipboard for analysis (supports optional question)
-
 ## Claude Code Skills
 
 ### `/resolve-github-alerts`
@@ -150,20 +145,6 @@ Follow up with:
 - "Ask Claude the same question for comparison"
 - "Ask Gemini for another perspective"
 - "What does DeepSeek think about this?"
-
-### Analyze a Clipboard Image
-
-Copy an image to your clipboard (screenshot, diagram, error message, etc.), then:
-
-```text
-Analyze my clipboard image
-```
-
-Or with a specific question:
-
-```text
-What's wrong with the UI layout in my clipboard image?
-```
 
 ### Debug with Multiple Perspectives
 
@@ -201,11 +182,6 @@ MCP_TOOLZ_DEEPSEEK_MODEL=deepseek-chat                        # DeepSeek model
 - Use `PYTHONPATH=src` before running Python directly
 - Or install via pip: `pip install mcp-toolz`
 
-### "No image found in clipboard"
-
-- Copy an image first (screenshot, right-click > Copy Image, etc.)
-- The `paste_image` tool requires macOS (uses AppleScript to read the clipboard)
-
 ## Project Structure
 
 ```text
@@ -217,8 +193,7 @@ mcp-toolz/
 │       ├── openai_client.py     # ChatGPT API client
 │       ├── anthropic_client.py  # Claude API client
 │       ├── gemini_client.py     # Gemini API client
-│       ├── deepseek_client.py   # DeepSeek API client
-│       └── clipboard.py         # macOS clipboard image capture
+│       └── deepseek_client.py   # DeepSeek API client
 ├── tests/                       # pytest tests
 ├── requirements.in
 └── requirements.txt
