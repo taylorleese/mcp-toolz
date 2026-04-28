@@ -43,7 +43,17 @@ jobs:
           pip install --require-hashes --no-cache-dir -r requirements-dev.txt
 
       - name: Install Claude Code CLI
-        run: npm install -g @anthropic-ai/claude-code
+        # Pinned by version + SHA-256. To bump:
+        #   1. CLAUDE_CODE_VERSION=$(npm view @anthropic-ai/claude-code version)
+        #   2. curl -sSL "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${CLAUDE_CODE_VERSION}.tgz" | sha256sum
+        env:
+          CLAUDE_CODE_VERSION: "2.1.121"
+          CLAUDE_CODE_SHA256: "fbb28f31d803d5cebafa8a5b95475df6ef152c219609940a3edd194b558a3460"
+        run: |
+          URL="https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${CLAUDE_CODE_VERSION}.tgz"
+          curl -sSfL -o /tmp/claude-code.tgz "$URL"
+          echo "${CLAUDE_CODE_SHA256}  /tmp/claude-code.tgz" | sha256sum -c -
+          npm install -g /tmp/claude-code.tgz
 
       - name: Configure git identity
         run: |
