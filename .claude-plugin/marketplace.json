@@ -1,0 +1,25 @@
+{
+  "name": "mcp-toolz",
+  "description": "Claude Code plugins from the mcp-toolz developer toolkit.",
+  "owner": {
+    "name": "Taylor Leese",
+    "email": "tleese22@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "precommit-detect",
+      "source": "./plugins/precommit-detect",
+      "description": "Detects whether a repo's pre-commit setup is wired up and walks you through approval-gated installs."
+    },
+    {
+      "name": "revise-all-docs",
+      "source": "./plugins/revise-all-docs",
+      "description": "Updates CLAUDE.md, README.md, and docs/**/*.md with session learnings."
+    },
+    {
+      "name": "resolve-github-alerts",
+      "source": "./plugins/resolve-github-alerts",
+      "description": "Resolves GitHub security alerts (Dependabot, code scanning, secret scanning) and opens PRs for review."
+    }
+  ]
+}
