@@ -116,16 +116,44 @@ Get second opinions from multiple LLMs on code, architecture decisions, and impl
 - `ask_gemini` - Get Gemini's analysis (supports custom questions)
 - `ask_deepseek` - Get DeepSeek's analysis (supports custom questions)
 
-## Claude Code Skills
+## Claude Code plugins
+
+This repo doubles as a Claude Code plugin marketplace. Install all three with:
+
+```text
+/plugin marketplace add taylorleese/mcp-toolz
+/plugin install precommit-detect@mcp-toolz
+/plugin install revise-all-docs@mcp-toolz
+/plugin install resolve-github-alerts@mcp-toolz
+```
+
+### `precommit-detect`
+
+Read-only check for pre-commit setup state. Registers `SessionStart` and `PostToolUse:EnterWorktree` hooks that detect whether the current repo's
+`.pre-commit-config.yaml` is wired up — pre-commit binary present, `.git/hooks/pre-commit` installed, Docker daemon reachable when the config requires it.
+When something is missing, the hook surfaces the gap as `additionalContext` so Claude can walk you through approval-gated installs (one prompt per missing
+item — never auto-installs).
+
+### `revise-all-docs`
+
+Provides the `/revise-all-docs` slash command and a matching model-invocable skill. Reviews the current session for context worth recording in the project's
+docs and updates **CLAUDE.md**, **README.md**, and **`docs/**/*.md`** with one-line additions. Categorizes by audience so internal CLAUDE.md context doesn't
+leak into user-facing README. Requires the official `claude-md-management` plugin (which it delegates to for CLAUDE.md updates):
+
+```text
+/plugin install claude-md-management@anthropics
+```
 
 ### `/resolve-github-alerts`
 
-Automatically triages and resolves GitHub security alerts (Dependabot, code scanning, secret scanning). Run it in Claude Code to:
+Triages and resolves GitHub security alerts (Dependabot, code scanning, secret scanning) across **pip / pip-tools / poetry / uv / npm / yarn / pnpm / cargo / go-modules / Docker / GitHub Actions** ecosystems. Run it in any repo to:
 
 - Fix failing Dependabot PRs (lint/test issues)
-- Bump vulnerable dependencies and recompile requirements
+- Bump vulnerable dependencies and recompile lockfiles
 - Remediate code scanning and secret scanning alerts
 - Submit a single PR with all fixes for manual review
+
+Auto-detects the project's verify commands (Makefile targets, pre-commit, ruff, pytest, npm scripts) — no per-project configuration required.
 
 ```text
 /resolve-github-alerts

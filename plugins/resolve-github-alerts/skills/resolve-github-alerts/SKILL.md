@@ -2,8 +2,10 @@
 name: resolve-github-alerts
 description: >-
   Resolve GitHub security alerts (Dependabot, code scanning, secret
-  scanning). Fixes failing Dependabot PRs, remediates remaining
-  vulnerability/code/secret alerts, and submits PRs for manual review.
+  scanning) across pip / pip-tools / poetry / uv / npm / yarn / pnpm /
+  cargo / go-modules / Docker / GitHub Actions ecosystems. Fixes
+  failing Dependabot PRs, remediates remaining vulnerability/code/
+  secret alerts, and submits PRs for manual review.
 ---
 
 # Resolve GitHub Alerts
@@ -15,7 +17,11 @@ code scanning alerts, and secret scanning alerts.
 
 - **Label**: `automated/resolve-github-alerts`
 - **Branch**: `automated/resolve-github-alerts`
-- **Base branch**: `main`
+- **Base branch**: detect at runtime — do not hardcode `main`. Most
+  repos use `main`, but some use `master`, `develop`, or `trunk`. Run
+  `gh repo view --json defaultBranchRef --jq .defaultBranchRef.name`
+  once at the start of execution and use the result everywhere a base
+  branch is needed (PR creation, branch creation, etc.).
 
 ### Setup
 
@@ -48,10 +54,12 @@ This skill may run inside a git worktree. Observe these rules:
 ## Resolution Priority
 
 1. **Fix the root cause in code** — All fixes must be committed as code
-   changes: dependency upgrades in `requirements*.in`/`requirements*.txt`,
-   Dockerfile base image tags, GitHub Actions versions, or application
-   code fixes in `src/`. Never apply ad hoc fixes via manual steps.
-   Never add lint exclusions or scanner ignores.
+   changes: dependency upgrades in the project's manifest/lockfiles
+   (e.g. `requirements*.{in,txt}`, `pyproject.toml`, `poetry.lock`,
+   `uv.lock`, `package.json`, `Cargo.toml`, `go.mod`), Dockerfile base
+   image tags, GitHub Actions versions, or application code fixes in
+   the project's source tree. Never apply ad hoc fixes via manual
+   steps. Never add lint exclusions or scanner ignores.
 2. **Dismiss only for confirmed false positives** — Only dismiss alerts
    for test credentials, false positives, or transitive dependencies
    with no available patch.
@@ -167,38 +175,111 @@ If no open alerts, skip to Phase 3.
 
 #### Step 2.2: Map alerts to files
 
-Based on ecosystem, identify which files to modify:
+Each Dependabot alert payload includes a `dependency.manifest_path`
+field — that's the ground-truth file holding the vulnerable pin.
+**Always prefer `manifest_path` over guesswork.** The discovery globs
+below are only for finding *related* files (e.g. when a
+`requirements.in` change cascades into a `requirements.txt` regen, or
+when a `package.json` bump must update its lockfile).
 
-| Ecosystem | Files |
-| ----------- | ------- |
-| pip | `requirements.in`, `requirements.txt`, `requirements-dev.in`, `requirements-dev.txt` |
-| docker | `Dockerfile`, `Dockerfile.glama` |
-| github-actions | `.github/workflows/*.yml` |
+Map by `dependency.package.ecosystem`:
+
+| Alert ecosystem | Discovery globs (related files) |
+| --- | --- |
+| `pip` | `requirements*.{in,txt}`, `pyproject.toml`, `setup.py`, `setup.cfg`, `Pipfile{,.lock}`, `poetry.lock`, `uv.lock` |
+| `npm` | `package.json`, `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml` |
+| `cargo` | `Cargo.toml`, `Cargo.lock` |
+| `go` | `go.mod`, `go.sum` |
+| `composer` | `composer.json`, `composer.lock` |
+| `bundler` | `Gemfile`, `Gemfile.lock` |
+| `nuget` | `*.csproj`, `packages.config`, `*.props` |
+| `docker` | `**/Dockerfile*` |
+| `github-actions` | `.github/workflows/*.{yml,yaml}` |
+
+If the ecosystem isn't in the table, fall back to reading
+`dependency.manifest_path` and applying the smallest possible edit
+that bumps the pin — most ecosystems use a "manifest + lockfile" pair
+that's straightforward to update once you've read both.
 
 #### Step 2.3: Apply fixes
 
 For each alert:
 
-1. Read the affected manifest file.
-2. Determine the fix:
-   - **Direct pip dependency**: Bump the version in `requirements.in`
-     (or `requirements-dev.in`), then run `make compile-requirements`
-     to regenerate the hashed `.txt` files.
-   - **Docker base image**: Update the image tag in the Dockerfile.
-   - **GitHub Actions**: Update the action version reference.
-3. Apply the fix using the Edit tool.
+1. Read the file at `dependency.manifest_path` to confirm the current
+   pin.
+2. Determine the fix command by `dependency.package.ecosystem`:
 
-#### Step 2.4: Push fixes as a PR
+   - **`pip` with pip-tools** (detect: any `requirements*.in` exists
+     alongside its `.txt`): bump the version pin in the matching `.in`
+     file. Recompile via the project's lockfile command (see
+     Step 2.4).
+   - **`pip` without pip-tools** (no `.in` files): bump the pin
+     directly in `requirements.txt` / `pyproject.toml`'s
+     `[project] dependencies` / `setup.py` `install_requires`.
+   - **`pip` with poetry** (detect: `pyproject.toml` `[tool.poetry]`
+     with `poetry.lock`): `poetry add <pkg>@<version>`, then
+     `poetry lock --no-update`.
+   - **`pip` with uv** (detect: `uv.lock`): edit the dep in
+     `pyproject.toml` (or run `uv pip install <pkg>==<version>`),
+     then `uv lock --upgrade-package <pkg>`.
+   - **`npm`** (detect: `package-lock.json`): bump in `package.json`,
+     then `npm install <pkg>@<version>` (regenerates the lockfile).
+   - **`yarn`** (detect: `yarn.lock`): `yarn add <pkg>@<version>`.
+   - **`pnpm`** (detect: `pnpm-lock.yaml`): `pnpm add <pkg>@<version>`.
+   - **`cargo`**: bump in `Cargo.toml`, then
+     `cargo update -p <pkg> --precise <version>`.
+   - **`go`**: `go get <module>@<version> && go mod tidy`.
+   - **`docker`**: update the image tag in the Dockerfile at
+     `manifest_path`. Prefer immutable tags (digest pinning with
+     `@sha256:...`) when the original used digest pinning.
+   - **`github-actions`**: update the action version in the workflow
+     at `manifest_path`. Prefer SHA + comment pinning (e.g.
+     `uses: actions/checkout@<sha>  # v5.0.1`) when the rest of the
+     repo follows that style.
+3. Apply edits via the Edit tool. For commands that mutate lockfiles,
+   run them in the worktree root.
+
+#### Step 2.4: Verify the fix
+
+After applying fixes, run the project's verify commands. Detect them
+in this order — first match wins:
+
+1. **Recompile lockfile** (only when applicable):
+   - `Makefile` defines `compile-requirements`, `lock`, or
+     `update-deps` → `make <target>`.
+   - `requirements*.in` exists →
+     `pip-compile --generate-hashes <input>.in` for each.
+   - `poetry.lock` exists → `poetry lock --no-update`.
+   - `uv.lock` exists → `uv lock`.
+   - npm/yarn/pnpm/cargo/go: the install command from Step 2.3
+     already updated the lockfile — no separate step.
+
+2. **Lint**:
+   - `Makefile` defines `lint` → `make lint`.
+   - Else `.pre-commit-config.yaml` exists →
+     `pre-commit run --all-files`.
+   - Else for Python: `ruff check .` if available.
+   - Else for JS/TS: `npm run lint` if `package.json` has a `lint`
+     script.
+   - Else: surface "no lint command detected — manual review needed"
+     in the PR body and continue.
+
+3. **Test**:
+   - `Makefile` defines `test` → `make test`.
+   - Else for Python: `pytest` if available.
+   - Else for JS/TS: `npm test` if `package.json` has a `test`
+     script.
+   - Else: surface "no test command detected — manual review needed"
+     in the PR body and continue.
+
+A missing lint/test step is **not** a hard failure for opening the
+PR — note it in the PR body so the human reviewer knows what wasn't
+auto-verified.
+
+#### Step 2.5: Push fixes as a PR
 
 Follow the PR Management Pattern above. Commit all Dependabot alert
 fixes together with a clear message describing what was bumped and why.
-
-#### Guardrails for Phase 2
-
-- After touching any `requirements*.in` file, **always** run
-  `make compile-requirements` to regenerate the hashed `.txt` files.
-- Run `make lint` after changes to verify no breakage.
-- Run `make test` after dependency changes to verify compatibility.
 
 ---
 

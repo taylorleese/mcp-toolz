@@ -34,9 +34,13 @@ Python 3.13+, src layout with `PYTHONPATH=src`.
 - MCP server tests patch at `mcp_server.server.ClientClass` level
 - pytest markers: unit, integration, slow
 
-## Skills
+## Claude Code plugins
 
-- `/resolve-github-alerts` - Automatically triages and resolves GitHub security alerts (Dependabot, code scanning, secret scanning). Fixes failing Dependabot PRs, bumps vulnerable dependencies, and submits PRs for manual review.
+This repo's `.claude-plugin/marketplace.json` ships three plugins. Install via `/plugin marketplace add taylorleese/mcp-toolz` from any session.
+
+- `precommit-detect` - SessionStart/PostToolUse hooks that detect whether the repo's pre-commit setup is wired up and walk through approval-gated installs.
+- `revise-all-docs` - `/revise-all-docs` command + skill for syncing CLAUDE.md, README.md, and docs/**/*.md with session learnings (depends on `claude-md-management@anthropics`).
+- `resolve-github-alerts` - `/resolve-github-alerts` triages and resolves GitHub security alerts across pip/pip-tools/poetry/uv/npm/cargo/go/docker/actions ecosystems and opens a single PR for review.
 
 ## Dependencies
 
