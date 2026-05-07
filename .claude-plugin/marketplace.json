@@ -14,7 +14,7 @@
     {
       "name": "revise-all-docs",
       "source": "./plugins/revise-all-docs",
-      "description": "Updates CLAUDE.md, README.md, and docs/**/*.md with session learnings."
+      "description": "Updates and audits CLAUDE.md, README.md, and docs/**/*.md. /revise-all-docs captures session learnings; /improve-all-docs runs a static quality audit."
     },
     {
       "name": "resolve-github-alerts",

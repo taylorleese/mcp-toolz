@@ -146,15 +146,32 @@ item — never auto-installs).
 
 ### `revise-all-docs`
 
-Provides the `/revise-all-docs` slash command and a matching model-invocable skill. Reviews the current session for context worth recording in the project's
-docs and updates **CLAUDE.md**, **README.md**, and **`docs/**/*.md`** with one-line additions. Categorizes by audience so internal CLAUDE.md context doesn't
-leak into user-facing README. Requires the official `claude-md-management` plugin (which it delegates to for CLAUDE.md updates):
+Two ways to keep **CLAUDE.md**, **README.md**, and **`docs/**/*.md`** in sync — pick by intent.
+
+#### `/revise-all-docs` — *"I just finished some work. Capture what we learned."*
+
+Reads the current conversation, pulls out commands discovered, gotchas hit, and patterns enforced, and proposes additions to the right doc file
+for each finding (project-internal context → `CLAUDE.md`, user-facing onboarding → `README.md`, deeper how-to → `docs/`). Run this at the end of
+a session that uncovered something worth recording.
+
+#### `/improve-all-docs` — *"Forget the session. Audit the docs as they stand today."*
+
+Statically scans every doc file, scores each against type-appropriate rubrics (install steps actually work? public command/API surface
+complete? versions and paths current? intra-doc links resolve? duplicated content?), then proposes targeted fixes — including **deletions** of
+stale or duplicated content, not just additions. Run this during cleanup passes, before a release, or when docs feel out of sync with the code.
+
+The `all-docs-improver` skill is the same audit auto-invoked when you ask in plain language ("are my docs up to date?", "check the README and
+docs"). The slash command is explicit; the skill is hands-free.
+
+#### Required dependency
+
+Both surfaces delegate `CLAUDE.md` work to the official `claude-md-management` plugin:
 
 ```text
 /plugin install claude-md-management@anthropics
 ```
 
-### `/resolve-github-alerts`
+### `resolve-github-alerts`
 
 Triages and resolves GitHub security alerts (Dependabot, code scanning, secret scanning) across **pip / pip-tools / poetry / uv / npm / yarn / pnpm / cargo / go-modules / Docker / GitHub Actions** ecosystems. Run it in any repo to:
 
