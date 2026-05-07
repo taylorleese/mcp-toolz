@@ -22,10 +22,9 @@ class TestMCPServerTools:
         """Test listing available tools."""
         tools = await mcp_server.list_tools()
 
-        assert len(tools) == 4
+        assert len(tools) == 3
         tool_names = [t.name for t in tools]
         assert "ask_chatgpt" in tool_names
-        assert "ask_claude" in tool_names
         assert "ask_gemini" in tool_names
         assert "ask_deepseek" in tool_names
 
@@ -67,24 +66,6 @@ class TestMCPServerTools:
         assert "ChatGPT's Answer:" in result[0].text
         assert "Answer to question" in result[0].text
         mock_client.get_second_opinion.assert_called_once_with("some code", "Is this correct?")
-
-    @pytest.mark.asyncio
-    @patch("mcp_server.server.ClaudeClient")
-    async def test_ask_claude_tool(
-        self,
-        mock_claude_class: MagicMock,
-        mcp_server: ContextMCPServer,
-    ) -> None:
-        """Test the ask_claude tool with mocked API."""
-        mock_client = MagicMock()
-        mock_client.get_second_opinion = MagicMock(return_value="Mocked Claude response")
-        mock_claude_class.return_value = mock_client
-
-        result = await mcp_server.call_tool("ask_claude", {"context": "some code to review"})
-
-        assert result is not None
-        assert isinstance(result[0], TextContent)
-        assert "Mocked Claude response" in result[0].text
 
     @pytest.mark.asyncio
     @patch("mcp_server.server.GeminiClient")
@@ -135,24 +116,6 @@ class TestMCPServerTools:
         mock_chatgpt_class.return_value = mock_client
 
         result = await mcp_server.call_tool("ask_chatgpt", {"context": "some code"})
-
-        assert result is not None
-        assert isinstance(result[0], TextContent)
-        assert "error" in result[0].text.lower()
-
-    @pytest.mark.asyncio
-    @patch("mcp_server.server.ClaudeClient")
-    async def test_ask_claude_error_handling(
-        self,
-        mock_claude_class: MagicMock,
-        mcp_server: ContextMCPServer,
-    ) -> None:
-        """Test ask_claude error handling."""
-        mock_client = MagicMock()
-        mock_client.get_second_opinion = MagicMock(side_effect=ValueError("API key missing"))
-        mock_claude_class.return_value = mock_client
-
-        result = await mcp_server.call_tool("ask_claude", {"context": "some code"})
 
         assert result is not None
         assert isinstance(result[0], TextContent)

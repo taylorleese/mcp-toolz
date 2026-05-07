@@ -20,7 +20,7 @@ MCP server for Claude Code that provides multi-LLM feedback tools.
 
 ## Features
 
-- **Multi-LLM Feedback**: Get second opinions from ChatGPT (OpenAI), Claude (Anthropic), Gemini (Google), and DeepSeek
+- **Multi-LLM Feedback**: Get second opinions from ChatGPT (OpenAI), Gemini (Google), and DeepSeek
 - **MCP Integration**: Works with Claude Code via the Model Context Protocol
 
 ## Quick Start
@@ -54,7 +54,6 @@ pip install -e ".[dev]"
 ```bash
 # Set your API keys as environment variables (at least one required for AI feedback tools)
 export OPENAI_API_KEY=sk-...           # For ChatGPT
-export ANTHROPIC_API_KEY=sk-ant-...    # For Claude
 export GOOGLE_API_KEY=...              # For Gemini
 export DEEPSEEK_API_KEY=sk-...         # For DeepSeek
 
@@ -77,7 +76,6 @@ Add to your Claude Code MCP settings:
       "args": ["-m", "mcp_server"],
       "env": {
         "OPENAI_API_KEY": "sk-...",
-        "ANTHROPIC_API_KEY": "sk-ant-...",
         "GOOGLE_API_KEY": "...",
         "DEEPSEEK_API_KEY": "sk-..."
       }
@@ -112,7 +110,6 @@ Restart Claude Code to load the MCP server.
 Get second opinions from multiple LLMs on code, architecture decisions, and implementation plans:
 
 - `ask_chatgpt` - Get ChatGPT's analysis (supports custom questions)
-- `ask_claude` - Get Claude's analysis (supports custom questions)
 - `ask_gemini` - Get Gemini's analysis (supports custom questions)
 - `ask_deepseek` - Get DeepSeek's analysis (supports custom questions)
 
@@ -130,12 +127,12 @@ This repo doubles as a Claude Code plugin marketplace. Install all four with:
 
 ### `mcp-toolz-server`
 
-Installs the mcp-toolz MCP server in Claude Code without manual editing of `~/.claude.json`. Once installed, the four tools (`ask_chatgpt`, `ask_claude`,
-`ask_gemini`, `ask_deepseek`) are available to the model in any Claude Code session. The plugin runs the server via `uvx --from mcp-toolz python -m
-mcp_server`, so PyPI is still the underlying distribution channel — this is purely an installation-ergonomics layer for Claude Code users.
+Installs the mcp-toolz MCP server in Claude Code without manual editing of `~/.claude.json`. Once installed, the three tools (`ask_chatgpt`, `ask_gemini`,
+`ask_deepseek`) are available to the model in any Claude Code session. The plugin runs the server via `uvx --from mcp-toolz python -m mcp_server`, so PyPI
+is still the underlying distribution channel — this is purely an installation-ergonomics layer for Claude Code users.
 
-Required env vars (set in your shell or via direnv/`.envrc`): `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`, `DEEPSEEK_API_KEY`. Each is
-independently optional — the corresponding tool just returns an error if its key is unset.
+Required env vars (set in your shell or via direnv/`.envrc`): `OPENAI_API_KEY`, `GOOGLE_API_KEY`, `DEEPSEEK_API_KEY`. Each is independently optional — the
+corresponding tool just returns an error if its key is unset.
 
 For Cursor / Zed / Claude Desktop users: keep configuring the MCP server manually via your client's standard mechanism. Claude Code plugins don't propagate
 to other clients.
@@ -183,7 +180,6 @@ Ask ChatGPT for their analysis.
 
 Follow up with:
 
-- "Ask Claude the same question for comparison"
 - "Ask Gemini for another perspective"
 - "What does DeepSeek think about this?"
 
@@ -192,7 +188,7 @@ Follow up with:
 ```text
 I'm getting "TypeError: Cannot read property 'map' of undefined" in my React component.
 The error occurs in UserList.jsx when rendering the users array.
-Ask ChatGPT and Claude for debugging suggestions.
+Ask ChatGPT and Gemini for debugging suggestions.
 ```
 
 ## Environment Variables
@@ -200,13 +196,11 @@ Ask ChatGPT and Claude for debugging suggestions.
 ```bash
 # Required (at least one for AI feedback tools)
 OPENAI_API_KEY=sk-...                              # Your OpenAI API key
-ANTHROPIC_API_KEY=sk-ant-...                       # Your Anthropic API key
 GOOGLE_API_KEY=...                                 # Your Google API key (for Gemini)
 DEEPSEEK_API_KEY=sk-...                            # Your DeepSeek API key
 
 # Optional
 MCP_TOOLZ_MODEL=gpt-5                                         # OpenAI model (default: gpt-5)
-MCP_TOOLZ_CLAUDE_MODEL=claude-sonnet-4-5-20250929             # Claude model
 MCP_TOOLZ_GEMINI_MODEL=gemini-2.0-flash-thinking-exp-01-21   # Gemini model
 MCP_TOOLZ_DEEPSEEK_MODEL=deepseek-chat                        # DeepSeek model
 ```
@@ -232,7 +226,6 @@ mcp-toolz/
 │   │   └── server.py            # MCP tools and handlers
 │   └── context_manager/         # Client implementations
 │       ├── openai_client.py     # ChatGPT API client
-│       ├── anthropic_client.py  # Claude API client
 │       ├── gemini_client.py     # Gemini API client
 │       └── deepseek_client.py   # DeepSeek API client
 ├── tests/                       # pytest tests

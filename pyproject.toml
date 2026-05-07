@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mcp-toolz"
-version = "0.5.1"
-description = "Get feedback from ChatGPT, Claude, Gemini, and DeepSeek via MCP tools"
+version = "0.6.0"
+description = "Get feedback from ChatGPT, Gemini, and DeepSeek via MCP tools"
 readme = "README.md"
 requires-python = ">=3.13"
 license = "MIT"
@@ -18,7 +18,6 @@ keywords = [
     "claude-code",
     "ai-assistant",
     "chatgpt",
-    "anthropic",
     "gemini",
     "deepseek"
 ]
@@ -34,7 +33,6 @@ dependencies = [
     "mcp==1.26.0",
     "pydantic==2.12.5",
     "openai==2.29.0",
-    "anthropic==0.87.0",
     "google-generativeai==0.8.6",
     "python-dotenv==1.2.2",
     "urllib3==2.6.3",

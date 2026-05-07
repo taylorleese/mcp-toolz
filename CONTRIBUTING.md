@@ -116,7 +116,7 @@ All these checks run automatically via pre-commit hooks when you commit.
 - Maintain test coverage >= 80%
 - Write unit tests for all new functionality
 - Use pytest fixtures for common test data
-- Mock external API calls (OpenAI, Anthropic, etc.)
+- Mock external API calls (OpenAI, Google, etc.)
 - Test both success and error cases
 
 ## Submitting Changes
@@ -162,7 +162,6 @@ mcp-toolz/
 │   │   ├── cli.py           # Click-based CLI
 │   │   ├── storage.py       # SQLite storage layer
 │   │   ├── openai_client.py # ChatGPT integration
-│   │   ├── anthropic_client.py  # Claude integration
 │   │   ├── gemini_client.py     # Gemini integration
 │   │   └── deepseek_client.py   # DeepSeek integration
 │   ├── mcp_server/          # MCP server implementation

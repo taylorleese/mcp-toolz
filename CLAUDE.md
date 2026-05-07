@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-MCP server providing multi-LLM tools (ask_chatgpt, ask_claude, ask_gemini, ask_deepseek).
+MCP server providing multi-LLM tools (ask_chatgpt, ask_gemini, ask_deepseek).
 Python 3.13+, src layout with `PYTHONPATH=src`.
 
 ## Key Commands
@@ -17,7 +17,7 @@ Python 3.13+, src layout with `PYTHONPATH=src`.
 ## Project Structure
 
 - `src/mcp_server/server.py` - MCP server with tool definitions and handlers
-- `src/context_manager/` - LLM client implementations (openai, anthropic, gemini, deepseek)
+- `src/context_manager/` - LLM client implementations (openai, gemini, deepseek)
 - `tests/` - pytest tests with asyncio auto mode; mock all API clients
 
 ## Code Style

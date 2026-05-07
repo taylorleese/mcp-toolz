@@ -6,7 +6,6 @@ from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from mcp.types import TextContent, Tool
 
-from context_manager.anthropic_client import ClaudeClient
 from context_manager.deepseek_client import DeepSeekClient
 from context_manager.gemini_client import GeminiClient
 from context_manager.openai_client import ChatGPTClient
@@ -29,23 +28,6 @@ class ContextMCPServer:
             Tool(
                 name="ask_chatgpt",
                 description="Ask ChatGPT a question about a context, or get a general second opinion",
-                inputSchema={
-                    "type": "object",
-                    "properties": {
-                        "context": {"type": "string", "description": "The context text to analyze or ask about"},
-                        "question": {
-                            "type": "string",
-                            "description": (
-                                "Optional specific question to ask about the context. If not provided, gets a general second opinion."
-                            ),
-                        },
-                    },
-                    "required": ["context"],
-                },
-            ),
-            Tool(
-                name="ask_claude",
-                description="Ask Claude a question about a context, or get a general second opinion",
                 inputSchema={
                     "type": "object",
                     "properties": {
@@ -107,19 +89,6 @@ class ContextMCPServer:
                 response = chatgpt_client.get_second_opinion(context, question)
 
                 header = "ChatGPT's Answer:" if question else "ChatGPT's Opinion:"
-                return [TextContent(type="text", text=f"{header}\n\n{response}")]
-            except ValueError as e:
-                return [TextContent(type="text", text=f"Error: {e}")]
-
-        if name == "ask_claude":
-            context = arguments["context"]
-            question = arguments.get("question")
-
-            try:
-                claude_client = ClaudeClient()
-                response = claude_client.get_second_opinion(context, question)
-
-                header = "Claude's Answer:" if question else "Claude's Opinion:"
                 return [TextContent(type="text", text=f"{header}\n\n{response}")]
             except ValueError as e:
                 return [TextContent(type="text", text=f"Error: {e}")]

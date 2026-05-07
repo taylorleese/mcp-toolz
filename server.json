@@ -1,9 +1,9 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
   "name": "io.github.taylorleese/mcp-toolz",
-  "description": "MCP server providing multi-AI perspective tools. Get feedback from ChatGPT, Claude, Gemini, and DeepSeek via MCP tools.",
+  "description": "MCP server providing multi-AI perspective tools. Get feedback from ChatGPT, Gemini, and DeepSeek via MCP tools.",
   "title": "MCP Toolz",
-  "version": "0.4.0",
+  "version": "0.6.0",
   "repository": {
     "url": "https://github.com/taylorleese/mcp-toolz",
     "source": "github"
@@ -13,7 +13,7 @@
       "registryType": "pypi",
       "registryBaseUrl": "https://pypi.org",
       "identifier": "mcp-toolz",
-      "version": "0.4.0",
+      "version": "0.6.0",
       "runtimeHint": "uvx",
       "transport": {
         "type": "stdio"
@@ -34,18 +34,6 @@
           "description": "OpenAI model to use for ChatGPT responses (defaults to gpt-5)",
           "isRequired": false,
           "default": "gpt-5"
-        },
-        {
-          "name": "ANTHROPIC_API_KEY",
-          "description": "Anthropic API key for ask_claude tool functionality",
-          "isRequired": false,
-          "isSecret": true
-        },
-        {
-          "name": "MCP_TOOLZ_CLAUDE_MODEL",
-          "description": "Anthropic model to use for Claude responses (defaults to claude-sonnet-4-5-20250929)",
-          "isRequired": false,
-          "default": "claude-sonnet-4-5-20250929"
         },
         {
           "name": "GOOGLE_API_KEY",
@@ -83,7 +71,6 @@
       "claude-code",
       "ai-assistant",
       "chatgpt",
-      "anthropic",
       "gemini",
       "deepseek"
     ]
