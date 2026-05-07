@@ -1,7 +1,7 @@
 {
   "name": "precommit-detect",
   "description": "Read-only check for pre-commit setup state. Detects missing pre-commit binary, uninstalled .git/hooks/pre-commit, and unreachable Docker daemon when the config requires it. Walks you through approval-gated installs via SessionStart and PostToolUse:EnterWorktree hooks.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": {
     "name": "Taylor Leese",
     "email": "tleese22@gmail.com"

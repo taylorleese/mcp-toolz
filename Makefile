@@ -1,4 +1,4 @@
-.PHONY: all help install install-dev compile-deps compile-requirements compile-requirements-dev check-deps test test-cov lint format clean build commit-version publish-test publish
+.PHONY: all help install install-dev compile-deps compile-requirements compile-requirements-dev check-deps test test-cov lint format refresh-plugins clean build commit-version publish-test publish
 
 # Default target - format, lint, and test
 all: format lint test
@@ -16,6 +16,7 @@ help:
 	@echo "  make test-cov               - Run tests with coverage report"
 	@echo "  make lint                   - Run all linters via pre-commit"
 	@echo "  make format                 - Format code via pre-commit"
+	@echo "  make refresh-plugins        - Refresh mcp-toolz marketplace mirror + installed plugins from origin/main"
 	@echo "  make clean                  - Remove generated files and caches"
 	@echo "  make build                  - Build distribution packages"
 	@echo "  make publish-test           - Publish to TestPyPI"
@@ -75,6 +76,22 @@ format:
 	pre-commit run ruff-format --all-files
 	pre-commit run ruff --all-files
 	pre-commit run markdownlint --all-files
+
+# Claude Code marketplace dev target
+# Pulls origin/main into the local marketplace mirror, then runs `claude plugin
+# update` for each plugin in this repo. Use after pushing a plugin change with
+# a version bump in plugin.json. If you forget the version bump, the update
+# step is a no-op (Claude Code keys the install cache by version) — fall back
+# to: claude plugin uninstall <p>@mcp-toolz && claude plugin install <p>@mcp-toolz.
+# After this completes, run /reload-plugins in your Claude Code session.
+refresh-plugins:
+	@echo "Refreshing mcp-toolz marketplace mirror from origin..."
+	@claude plugin marketplace update mcp-toolz
+	@echo "Updating installed plugins..."
+	@for p in precommit-detect revise-all-docs resolve-github-alerts; do \
+		claude plugin update $$p@mcp-toolz; \
+	done
+	@echo "✅ Plugins refreshed. Run /reload-plugins in your Claude Code session to apply."
 
 # Cleanup targets
 clean:

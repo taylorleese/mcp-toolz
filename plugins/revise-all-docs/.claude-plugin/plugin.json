@@ -1,7 +1,7 @@
 {
   "name": "revise-all-docs",
   "description": "Revise CLAUDE.md, README.md, and docs/**/*.md with session learnings.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": {
     "name": "Taylor Leese",
     "email": "tleese22@gmail.com"

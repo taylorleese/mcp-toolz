@@ -1,7 +1,7 @@
 {
   "name": "resolve-github-alerts",
   "description": "Resolve GitHub security alerts (Dependabot, code scanning, secret scanning) across pip / pip-tools / poetry / uv / npm / cargo / go-modules / Docker / GitHub Actions ecosystems. Opens PRs for manual review.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": {
     "name": "Taylor Leese",
     "email": "tleese22@gmail.com"
