@@ -38,8 +38,9 @@ Python 3.13+, src layout with `PYTHONPATH=src`.
 
 ## Claude Code plugins
 
-This repo's `.claude-plugin/marketplace.json` ships three plugins. Install via `/plugin marketplace add taylorleese/mcp-toolz` from any session.
+This repo's `.claude-plugin/marketplace.json` ships four plugins. Install via `/plugin marketplace add taylorleese/mcp-toolz` from any session.
 
+- `mcp-toolz-server` - wraps `uvx --from mcp-toolz python -m mcp_server` as an installable MCP server config; one-step install of the multi-LLM tools for Claude Code users (other MCP clients still configure manually).
 - `precommit-detect` - SessionStart/PostToolUse hooks that detect whether the repo's pre-commit setup is wired up and walk through approval-gated installs.
 - `revise-all-docs` - `/revise-all-docs` command + skill for syncing CLAUDE.md, README.md, and docs/**/*.md with session learnings (depends on `claude-md-management@anthropics`).
 - `resolve-github-alerts` - `/resolve-github-alerts` triages and resolves GitHub security alerts across pip/pip-tools/poetry/uv/npm/cargo/go/docker/actions ecosystems and opens a single PR for review.

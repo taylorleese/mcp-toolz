@@ -20,6 +20,11 @@
       "name": "resolve-github-alerts",
       "source": "./plugins/resolve-github-alerts",
       "description": "Resolves GitHub security alerts (Dependabot, code scanning, secret scanning) and opens PRs for review."
+    },
+    {
+      "name": "mcp-toolz-server",
+      "source": "./plugins/mcp-toolz-server",
+      "description": "One-step install of the mcp-toolz MCP server in Claude Code (auto-registers ask_chatgpt / ask_claude / ask_gemini / ask_deepseek tools)."
     }
   ]
 }

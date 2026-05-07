@@ -118,14 +118,27 @@ Get second opinions from multiple LLMs on code, architecture decisions, and impl
 
 ## Claude Code plugins
 
-This repo doubles as a Claude Code plugin marketplace. Install all three with:
+This repo doubles as a Claude Code plugin marketplace. Install all four with:
 
 ```text
 /plugin marketplace add taylorleese/mcp-toolz
+/plugin install mcp-toolz-server@mcp-toolz
 /plugin install precommit-detect@mcp-toolz
 /plugin install revise-all-docs@mcp-toolz
 /plugin install resolve-github-alerts@mcp-toolz
 ```
+
+### `mcp-toolz-server`
+
+Installs the mcp-toolz MCP server in Claude Code without manual editing of `~/.claude.json`. Once installed, the four tools (`ask_chatgpt`, `ask_claude`,
+`ask_gemini`, `ask_deepseek`) are available to the model in any Claude Code session. The plugin runs the server via `uvx --from mcp-toolz python -m
+mcp_server`, so PyPI is still the underlying distribution channel — this is purely an installation-ergonomics layer for Claude Code users.
+
+Required env vars (set in your shell or via direnv/`.envrc`): `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`, `DEEPSEEK_API_KEY`. Each is
+independently optional — the corresponding tool just returns an error if its key is unset.
+
+For Cursor / Zed / Claude Desktop users: keep configuring the MCP server manually via your client's standard mechanism. Claude Code plugins don't propagate
+to other clients.
 
 ### `precommit-detect`
 

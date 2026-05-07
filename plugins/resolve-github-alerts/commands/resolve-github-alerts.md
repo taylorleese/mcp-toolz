@@ -236,16 +236,41 @@ For each alert:
 
 #### Step 2.4: Verify the fix
 
-After applying fixes, run the project's verify commands. Detect them
-in this order — first match wins:
+**Before running ANY Python verify command below, detect the project's
+Python runner.** If pip/python isn't on the default PATH, every
+subsequent make/pip-compile/pytest/ruff invocation will fail with
+"command not found". Detect in this order — first match wins — and
+prefix all subsequent shell commands accordingly:
+
+- `venv/bin/activate` exists → prefix with `source venv/bin/activate &&`
+- `.venv/bin/activate` exists → prefix with `source .venv/bin/activate &&`
+- `poetry.lock` exists → wrap commands as `poetry run <cmd>`
+- `Pipfile.lock` exists → wrap commands as `pipenv run <cmd>`
+- `uv.lock` exists → wrap commands as `uv run <cmd>`
+- None of the above → assume system Python; run commands as-is
+
+Apply the chosen prefix to lockfile-recompile, lint, AND test
+sub-steps below. Skip this preamble entirely for npm/yarn/pnpm/cargo/go
+projects — their tooling is typically on PATH via system package
+managers.
+
+After detecting the runner, run the project's verify commands in this
+order — first match wins:
 
 1. **Recompile lockfile** (only when applicable):
-   - `Makefile` defines `compile-requirements`, `lock`, or
-     `update-deps` → `make <target>`.
-   - `requirements*.in` exists →
-     `pip-compile --generate-hashes <input>.in` for each.
-   - `poetry.lock` exists → `poetry lock --no-update`.
-   - `uv.lock` exists → `uv lock`.
+   - `Makefile` defines `compile-deps`, `compile-requirements`, `lock`,
+     or `update-deps` → `make <target>`. Prefer `compile-deps` if it
+     exists, since it usually compiles BOTH prod and dev requirements.
+   - **Dev-requirements follow-up**: if you ran `make compile-requirements`
+     (which typically only updates the prod tree) AND a sibling
+     `make compile-requirements-dev` target exists alongside a
+     `requirements-dev*.in` file, run that next so the dev lockfile
+     stays in sync.
+   - Else if `requirements*.in` files exist →
+     `pip-compile --generate-hashes <input>.in` for EACH `.in` file
+     (production AND dev).
+   - Else if `poetry.lock` exists → `poetry lock --no-update`.
+   - Else if `uv.lock` exists → `uv lock`.
    - npm/yarn/pnpm/cargo/go: the install command from Step 2.3
      already updated the lockfile — no separate step.
 
