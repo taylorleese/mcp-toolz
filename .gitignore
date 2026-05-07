@@ -42,9 +42,9 @@ node_modules/
 *.swo
 *~
 
-# Claude Code local settings (skills are checked in)
-.claude/*
-!.claude/skills/
+# Claude Code local settings (project-local config is gitignored;
+# the marketplace lives at .claude-plugin/ + plugins/, not under .claude/)
+.claude/
 
 # OS
 .DS_Store

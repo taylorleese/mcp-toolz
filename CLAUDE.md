@@ -26,6 +26,8 @@ Python 3.13+, src layout with `PYTHONPATH=src`.
 - Strict mypy with `explicit_package_bases = true`
 - Google-style docstrings (pydocstyle)
 - Error messages use `msg = "..."; raise ValueError(msg)` pattern (ruff EM rules)
+- Markdown line length: 240 (markdownlint MD013) — wrap long paragraphs manually; the hook fails, it doesn't auto-wrap
+- Avoid `+` at the start of continuation lines in markdown — markdownlint MD004 silently rewrites it to `-`
 
 ## Testing
 

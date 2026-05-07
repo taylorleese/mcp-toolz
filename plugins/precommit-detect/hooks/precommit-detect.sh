@@ -96,11 +96,17 @@ if [ "$missing" -eq 0 ]; then
   exit 0
 fi
 
+# Resolve the protocol-instructions path. Prefer ${CLAUDE_PLUGIN_ROOT} (set by
+# Claude Code when this script runs as a plugin hook); fall back to the
+# script's own directory so manual invocations still work.
+plugin_dir="${CLAUDE_PLUGIN_ROOT:+${CLAUDE_PLUGIN_ROOT}/hooks}"
+plugin_dir="${plugin_dir:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
+
 body="## pre-commit setup check ($repo_root)
 
 $(cat "$report")
 
-**Action required:** read \`\$HOME/.claude/hooks/PRECOMMIT_INSTRUCTIONS.md\` and follow the per-item AskUserQuestion protocol. Do not install anything without explicit user approval for each item."
+**Action required:** read \`${plugin_dir}/PRECOMMIT_INSTRUCTIONS.md\` and follow the per-item AskUserQuestion protocol. Do not install anything without explicit user approval for each item."
 rm -f "$report"
 
 python3 - "$body" <<'PY'
