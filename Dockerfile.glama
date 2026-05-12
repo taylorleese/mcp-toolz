@@ -27,8 +27,7 @@ COPY docker/glama/package.json docker/glama/package-lock.json /tmp/npm-deps/
 
 WORKDIR /tmp/npm-deps
 RUN npm ci --omit=dev && \
-    ln -s /tmp/npm-deps/node_modules/.bin/mcp-proxy /usr/local/bin/mcp-proxy && \
-    ln -s /tmp/npm-deps/node_modules/.bin/pnpm /usr/local/bin/pnpm
+    ln -s /tmp/npm-deps/node_modules/.bin/mcp-proxy /usr/local/bin/mcp-proxy
 
 WORKDIR /app
 
@@ -55,6 +54,9 @@ RUN uv venv --python 3.13 && \
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:8080/ping || exit 1
 
-# Note: The "--" separator is critical - it tells mcp-proxy to stop parsing flags
-# Without it, "-m" gets interpreted as an mcp-proxy option instead of being passed to Python
-CMD ["mcp-proxy", "/app/.venv/bin/python", "--", "-m", "mcp_server"]
+# This CMD must mirror Glama's auto-detected cmdArguments verbatim — its purpose is to
+# reproduce their CI locally, not to be "more correct" than it. Glama parses cmdArguments
+# from the README MCP Server Setup JSON, so we expose a console_script (`mcp-toolz`) there
+# instead of `python -m mcp_server` to keep flags out of mcp-proxy's argv. If you change
+# the README install instructions, update this CMD or the reproducer drifts.
+CMD ["mcp-proxy", "/app/.venv/bin/mcp-toolz"]

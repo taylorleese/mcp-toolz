@@ -4,7 +4,6 @@
   "description": "Global npm dependencies for mcp-toolz Glama image",
   "private": true,
   "dependencies": {
-    "mcp-proxy": "5.12.5",
-    "pnpm": "11.0.0-alpha.3"
+    "mcp-proxy": "6.4.3"
   }
 }

@@ -72,8 +72,8 @@ Add to your Claude Code MCP settings:
 {
   "mcpServers": {
     "mcp-toolz": {
-      "command": "python",
-      "args": ["-m", "mcp_server"],
+      "command": "mcp-toolz",
+      "args": [],
       "env": {
         "OPENAI_API_KEY": "sk-...",
         "GOOGLE_API_KEY": "...",

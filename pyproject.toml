@@ -44,6 +44,9 @@ Repository = "https://github.com/taylorleese/mcp-toolz"
 Issues = "https://github.com/taylorleese/mcp-toolz/issues"
 Documentation = "https://github.com/taylorleese/mcp-toolz#readme"
 
+[project.scripts]
+mcp-toolz = "mcp_server.__main__:main"
+
 [tool.black]
 line-length = 140
 target-version = ['py313']
