@@ -10,16 +10,11 @@ annotated-types==0.7.0 \
     # via
     #   -r requirements.txt
     #   pydantic
-anthropic==0.87.0 \
-    --hash=sha256:098fef3753cdd3c0daa86f95efb9c8d03a798d45c5170329525bb4653f6702d0 \
-    --hash=sha256:e2669b86d42c739d3df163f873c51719552e263a3d85179297180fb4fa00a236
-    # via -r requirements.txt
 anyio==4.11.0 \
     --hash=sha256:0287e96f4d26d4149305414d4e3bc32f0dcd0862365a4bddea19d7a1ec38c4fc \
     --hash=sha256:82a8d0b81e318cc5ce71a5f1f8b5c4e63619620b63141ef8c995fa0db95a57c4
     # via
     #   -r requirements.txt
-    #   anthropic
     #   httpx
     #   mcp
     #   openai
@@ -480,18 +475,11 @@ distro==1.9.0 \
     --hash=sha256:7bffd925d65168f85027d8da9af6bddab658135b840670a223589bc0c8ef02b2
     # via
     #   -r requirements.txt
-    #   anthropic
     #   openai
 dnspython==2.8.0 \
     --hash=sha256:01d9bbc4a2d76bf0db7c1f729812ded6d912bd318d3b1cf81d30c0f845dbf3af \
     --hash=sha256:181d3c6996452cb1189c4046c61599b84a5a86e099562ffde77d26984ff26d0f
     # via email-validator
-docstring-parser==0.17.0 \
-    --hash=sha256:583de4a309722b3315439bb31d64ba3eebada841f2e2cee23b99df001434c912 \
-    --hash=sha256:cf2569abd23dce8099b300f9b4fa8191e9582dda731fd533daf54c4551658708
-    # via
-    #   -r requirements.txt
-    #   anthropic
 docutils==0.22.3 \
     --hash=sha256:21486ae730e4ca9f622677b1412b879af1791efcfba517e4c6f60be543fc8cdd \
     --hash=sha256:bd772e4aca73aff037958d44f2be5229ded4c09927fcf8690c577b66234d6ceb
@@ -654,7 +642,6 @@ httpx==0.28.1 \
     --hash=sha256:d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad
     # via
     #   -r requirements.txt
-    #   anthropic
     #   mcp
     #   openai
 httpx-sse==0.4.3 \
@@ -813,7 +800,6 @@ jiter==0.12.0 \
     --hash=sha256:fd990541982a24281d12b67a335e44f117e4c6cbad3c3b75c7dea68bf4ce3a67
     # via
     #   -r requirements.txt
-    #   anthropic
     #   openai
 jsonschema==4.25.1 \
     --hash=sha256:3fba0169e345c7175110351d456342c364814cfcf3b964ba4587f22915230a63 \
@@ -1194,7 +1180,6 @@ pydantic[email]==2.12.5 \
     --hash=sha256:e561593fccf61e8a20fc46dfc2dfe075b8be7d0188df33f221ad1f0139180f9d
     # via
     #   -r requirements.txt
-    #   anthropic
     #   google-generativeai
     #   mcp
     #   openai
@@ -1759,7 +1744,6 @@ sniffio==1.3.1 \
     --hash=sha256:f4324edc670a0f49750a81b895f35c3adb843cca46f0530f79fc1babb23789dc
     # via
     #   -r requirements.txt
-    #   anthropic
     #   anyio
     #   openai
 snowballstemmer==3.0.1 \
@@ -1858,7 +1842,6 @@ typing-extensions==4.15.0 \
     --hash=sha256:f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548
     # via
     #   -r requirements.txt
-    #   anthropic
     #   google-generativeai
     #   grpcio
     #   mcp
@@ -1882,9 +1865,9 @@ uritemplate==4.2.0 \
     # via
     #   -r requirements.txt
     #   google-api-python-client
-urllib3==2.6.3 \
-    --hash=sha256:1b62b6884944a57dbe321509ab94fd4d3b307075e0c2eae991ac71ee15ad38ed \
-    --hash=sha256:bf272323e553dfb2e87d9bfd225ca7b0f467b919d7bbd355436d3fd37cb0acd4
+urllib3==2.7.0 \
+    --hash=sha256:231e0ec3b63ceb14667c67be60f2f2c40a518cb38b03af60abc813da26505f4c \
+    --hash=sha256:9fb4c81ebbb1ce9531cce37674bbc6f1360472bc18ca9a553ede278ef7276897
     # via
     #   -r requirements.txt
     #   requests
