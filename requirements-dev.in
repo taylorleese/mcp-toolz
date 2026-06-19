@@ -2,7 +2,7 @@
 -r requirements.txt
 
 # Build tools (required when using --generate-hashes)
-pip==26.1
+pip==26.1.2
 setuptools==82.0.1
 
 # Testing
@@ -42,6 +42,7 @@ filelock==3.25.2
 jaraco-context==6.1.1
 pygments==2.20.0
 rfc3161-client==1.0.6
+pyopenssl==26.2.0
 
 # Platform-specific dependencies (required on Linux but not macOS)
 secretstorage==3.5.0
